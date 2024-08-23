@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/library"
+        android:id="@+id/nav_plalist"
+        android:title="Favouirate Songs" />
+    <item
+        android:icon="@drawable/setting"
+        android:id="@+id/nav_seting"
+        android:title="Setting"/>
+    <item
+        android:icon="@drawable/logout"
+        android:id="@+id/nav_logout"
+        android:title="Log out"/>
+
+
+</menu>
