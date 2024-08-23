@@ -54,7 +54,7 @@
         android:id="@+id/animationView"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        app:layout_constraintBottom_toTopOf="@+id/editText2"
+        app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
         android:background="@color/black"/>
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
@@ -84,6 +84,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/errormsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/poppins_light"
+        android:text="Account already exist with email?"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.409"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+
+    <TextView
+        android:id="@+id/gotologin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:onClick="gotologin"
+        android:text=" login"
+        android:textColor="@color/red"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/errormsg"
+        app:layout_constraintStart_toEndOf="@+id/errormsg"
+        app:layout_constraintTop_toTopOf="@+id/errormsg"
+        app:layout_constraintVertical_bias="1.0" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/materialButton"
         android:layout_width="match_parent"
@@ -97,8 +130,8 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2"
-        android:onClick="dashboard"/>
+        app:layout_constraintTop_toBottomOf="@+id/errormsg"
+        android:onClick="createAccount"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

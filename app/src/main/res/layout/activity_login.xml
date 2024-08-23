@@ -20,13 +20,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/start"
+            android:id="@+id/back"
             android:layout_width="40dp"
             android:layout_height="45dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="115dp"
             android:backgroundTint="@color/gray"
-            android:onClick="previous"
             app:cornerRadius="35dp"
             app:icon="@drawable/back"
             android:paddingLeft="23dp"
@@ -64,7 +63,7 @@
 
     <EditText
 
-        android:id="@+id/editText2"
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
@@ -84,9 +83,9 @@
         app:layout_constraintTop_toBottomOf="@+id/text" />
 
     <EditText
+        android:id="@+id/password"
         android:drawableStart="@drawable/lock"
         android:drawablePadding="5dp"
-        android:id="@+id/editText3"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
@@ -100,22 +99,24 @@
         android:textColorHint="@color/lightgray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <TextView
+        android:id="@+id/forgotpassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Forgot passord?"
         android:textColor="@color/lightgray"
+        android:onClick="forgotpassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.932"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton"
+        android:id="@+id/loginbtn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
@@ -125,10 +126,10 @@
         android:text="Log in"
         android:textColor="@color/white"
         android:textSize="18dp"
-        android:onClick="gotootpverifaction"
+        android:onClick="logIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <TextView
         android:id="@+id/textView4"
@@ -140,7 +141,7 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialButton" />
+        app:layout_constraintTop_toBottomOf="@+id/loginbtn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/google"
@@ -179,6 +180,7 @@
         app:layout_constraintTop_toBottomOf="@+id/google" />
 
     <TextView
+        android:id="@+id/gotosignup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -190,7 +192,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toTopOf="@+id/textView2"
         app:layout_constraintVertical_bias="0.0"
-        android:onClick="gotosignup"
         />
 
 

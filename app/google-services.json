@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "967130822491",
+    "project_id": "kittunes-51590",
+    "storage_bucket": "kittunes-51590.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967130822491:android:7c3c4c16e8cf8339a88c7e",
+        "android_client_info": {
+          "package_name": "com.kittunes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1OGkVkB001Aoz4tyWVLzxH9M3laCVDlw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
