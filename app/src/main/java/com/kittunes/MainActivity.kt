@@ -57,9 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         replaceFragment(HomeFragment())
-
         //Authentication
-
 
     }
     private fun replaceFragment(fragment: Fragment){
