@@ -1,7 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Kittunes" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Kittunes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- Disable automatic capitalization globally -->
+        <item name="textAllCaps">false</item>
     </style>
+
+    <style name="Theme.Kittunes" parent="Base.Theme.Kittunes" />
 </resources>
