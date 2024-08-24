@@ -14,42 +14,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@color/black"
             android:gravity="center_horizontal"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Toolbar Content -->
             <ImageButton
                 android:id="@+id/menubtn"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_gravity="start"
                 android:background="@drawable/profile_image"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="5dp"
-                android:scaleType="centerCrop"
-                android:layout_gravity="start"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:fontFamily="@font/poppins_semibold"
                 android:paddingStart="10dp"
                 android:text="Welcome Sandeep"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                android:layout_gravity="center"/>
+                android:textSize="20sp" />
 
         </androidx.appcompat.widget.Toolbar>
 
-        <!-- Main Content -->
         <FrameLayout
             android:id="@+id/frame_container"
             android:layout_width="0dp"
@@ -63,10 +62,11 @@
 
         <!-- Bottom Navigation -->
         <LinearLayout
+            android:layout_marginHorizontal="3dp"
             android:id="@+id/currentsong"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:background="@color/gray"
+            android:layout_height="60dp"
+            android:background="@drawable/curveborder"
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
