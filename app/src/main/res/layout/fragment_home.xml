@@ -9,14 +9,14 @@
     android:background="@color/black">
 
     <TextView
-        android:id="@+id/song_title"
+        android:id="@+id/dummy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="272dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Home  fragment "
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

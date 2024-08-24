@@ -2,11 +2,18 @@ package com.kittunes
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.kittunes.databinding.ActivityMainBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -34,6 +41,33 @@ class MainActivity : AppCompatActivity() {
             val bottomSheetFragment = SongDetailBottomSheetFragment()
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
+
+        val retrofitBuilder=Retrofit.Builder()
+            .baseUrl("https://spotify23.p.rapidapi.com/search/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiInterface::class.java)
+        val retrofitData=retrofitBuilder.getData("Arijit singh")
+
+        retrofitData.enqueue(object : Callback<MyData> {
+            override fun onResponse(call: Call<MyData>, response: Response<MyData>) {
+                if (response.isSuccessful) {
+                    val dataList = response.body()
+                    if (dataList != null) {
+                        val songTitleTextView: TextView = findViewById(R.id.dummy)
+                        songTitleTextView.text = dataList.toString()
+                    } else {
+                        Log.e("Retrofit", "Data list is null")
+                    }
+                } else {
+                    Log.e("Retrofit", "Response error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MyData>, t: Throwable) {
+                Log.e("Retrofit", "Failure: ${t.message}")
+            }
+        })
     }
 
     private fun setupToolbar() {
