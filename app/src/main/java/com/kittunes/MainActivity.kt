@@ -30,6 +30,10 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         // Load the default fragment
         replaceFragment(HomeFragment())
+        binding.currentsong.setOnClickListener {
+            val bottomSheetFragment = SongDetailBottomSheetFragment()
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        }
     }
 
     private fun setupToolbar() {
