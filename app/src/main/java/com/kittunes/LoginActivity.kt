@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         binding.back.setOnClickListener {
             startActivity(Intent(this, Welcome::class.java))
+            finish()
         }
         binding.gotosignup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
@@ -60,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
                     if (exception is FirebaseAuthException) {
                         handleSignInError(exception)
                     } else {
-                        showError("Sign-in failed. Please try again.")
+                        showError("Sign-in failed. Please check your credentials and try again.")
                     }
                 }
             }
@@ -71,10 +72,15 @@ class LoginActivity : AppCompatActivity() {
         Log.e("SignInError", "Error message: ${exception.message}")
 
         when (exception.errorCode) {
-            "ERROR_INVALID_EMAIL" -> showError("Invalid email format. Please enter a valid email address.")
-            "ERROR_USER_NOT_FOUND" -> showError("Email not found. Please sign up.")
+            "ERROR_INVALID_EMAIL" -> showError("The email address is not formatted correctly. Please enter a valid email.")
+            "ERROR_USER_NOT_FOUND" -> showError("No account found with this email. Please sign up.")
             "ERROR_WRONG_PASSWORD" -> showError("Incorrect password. Please try again.")
-            "ERROR_INVALID_CREDENTIAL" -> showError("Invalid credentials. Please check your email and password.")
+            "ERROR_INVALID_CREDENTIAL" -> showError("The supplied credentials are incorrect or have expired. Please try again.")
+            "ERROR_USER_DISABLED" -> showError("This account has been disabled. Please contact support.")
+            "ERROR_EMAIL_ALREADY_IN_USE" -> showError("The email address is already in use by another account.")
+            "ERROR_TOO_MANY_REQUESTS" -> showError("We have blocked all requests from this device due to unusual activity. Please try again later.")
+            "ERROR_OPERATION_NOT_ALLOWED" -> showError("This operation is not allowed. Please enable the necessary settings in Firebase.")
+            // Handle other specific error codes as needed
             else -> showError("Sign-in failed. Please check your credentials and try again.")
         }
     }

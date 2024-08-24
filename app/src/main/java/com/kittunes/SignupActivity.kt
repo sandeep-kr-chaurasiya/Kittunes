@@ -27,6 +27,10 @@ class SignupActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             startActivity(Intent(this, Welcome::class.java))
         }
+        binding.gotologin.setOnClickListener{
+            startActivity(Intent(this, LoginActivity::class.java))
+            finishAffinity()
+        }
     }
 
     fun next(view: View) {
@@ -60,4 +64,5 @@ class SignupActivity : AppCompatActivity() {
 
         return true
     }
+
 }
