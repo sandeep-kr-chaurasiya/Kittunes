@@ -42,32 +42,6 @@ class MainActivity : AppCompatActivity() {
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
-        val retrofitBuilder=Retrofit.Builder()
-            .baseUrl("https://spotify23.p.rapidapi.com/search/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiInterface::class.java)
-        val retrofitData=retrofitBuilder.getData("Arijit singh")
-
-        retrofitData.enqueue(object : Callback<MyData> {
-            override fun onResponse(call: Call<MyData>, response: Response<MyData>) {
-                if (response.isSuccessful) {
-                    val dataList = response.body()
-                    if (dataList != null) {
-                        val songTitleTextView: TextView = findViewById(R.id.dummy)
-                        songTitleTextView.text = dataList.toString()
-                    } else {
-                        Log.e("Retrofit", "Data list is null")
-                    }
-                } else {
-                    Log.e("Retrofit", "Response error: ${response.errorBody()?.string()}")
-                }
-            }
-
-            override fun onFailure(call: Call<MyData>, t: Throwable) {
-                Log.e("Retrofit", "Failure: ${t.message}")
-            }
-        })
     }
 
     private fun setupToolbar() {
