@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -38,12 +37,14 @@
                 android:scaleType="centerCrop" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:id="@+id/username"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="start"
                 android:fontFamily="@font/poppins_semibold"
-                android:paddingStart="10dp"
-                android:text="Welcome Sandeep"
+                android:text="Welcome "
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
@@ -98,7 +99,7 @@
                 android:paddingEnd="8dp">
 
                 <TextView
-                    android:id="@+id/song_name"
+                    android:id="@+id/song_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
@@ -122,6 +123,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
+                android:layout_gravity="center_vertical"
                 android:background="@color/transparent"
                 android:clickable="true"
                 android:focusable="true"

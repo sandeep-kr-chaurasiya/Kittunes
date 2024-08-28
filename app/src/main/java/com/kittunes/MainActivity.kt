@@ -8,16 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,22 +23,44 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser == null) {
             redirectToWelcome()
             return
         }
-        // Initialize toolbar and navigation
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val username = document.getString("name")
+                        binding.username.text = "Welcome $username"
+                    } else {
+                        binding.username.text = "User not found"
+                        Log.d("MainActivity", "Document does not exist")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    binding.username.text = "Error fetching username"
+                    Log.e("MainActivity", "Error fetching username", exception)
+                }
+        } else {
+            binding.username.text = "User not logged in"
+            Log.d("MainActivity", "User is not logged in")
+        }
+
         setupToolbar()
         setupDrawerNavigation()
         setupBottomNavigation()
+
         // Load the default fragment
         replaceFragment(HomeFragment())
+
         binding.currentsong.setOnClickListener {
-            val bottomSheetFragment = SongDetailBottomSheetFragment()
+            val bottomSheetFragment = SongDetailBottomFragment()
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
-
     }
 
     private fun setupToolbar() {
@@ -52,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             toggleDrawer()
         }
     }
+
     private fun toggleDrawer() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -67,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     auth.signOut()
                     redirectToWelcome()
                 }
-                // Add other cases if needed
+                else -> Log.e("MainActivity", "Unknown drawer item selected")
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -89,7 +109,10 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(LibraryFragment())
                     true
                 }
-                else -> false
+                else -> {
+                    Log.e("MainActivity", "Unknown bottom navigation item selected")
+                    false
+                }
             }
         }
     }

@@ -65,24 +65,24 @@
         android:fontFamily="@font/poppins_semibold"
         android:text="Song titleof the song "
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="21sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.105"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/song_image" />
+
     <TextView
         android:id="@+id/song_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Arijit singh "
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.046"
+        app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/song_title" />
+        app:layout_constraintTop_toBottomOf="@+id/song_title" />
 
     <SeekBar
         android:id="@+id/seek_bar"
@@ -110,11 +110,11 @@
         app:layout_constraintTop_toBottomOf="@+id/seek_bar" />
 
     <TextView
-        android:id="@+id/running"
+        android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="18dp"
-        android:text="2:15"
+        android:text="0:00"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/seek_bar"
