@@ -30,10 +30,10 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             skipCollapsed = true
             peekHeight = resources.displayMetrics.heightPixels
         }
-
         binding.down.setOnClickListener {
             dismiss()
         }
+
     }
 
     override fun onDestroyView() {

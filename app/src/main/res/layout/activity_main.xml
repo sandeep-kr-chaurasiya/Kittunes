@@ -37,12 +37,12 @@
                 android:scaleType="centerCrop" />
 
             <TextView
-                android:gravity="center"
                 android:maxLines="1"
+                android:gravity="start"
+                android:paddingStart="20dp"
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Welcome "
                 android:textColor="@color/white"

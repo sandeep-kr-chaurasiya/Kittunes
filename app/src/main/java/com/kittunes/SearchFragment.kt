@@ -52,7 +52,7 @@ class SearchFragment : Fragment() {
             }
         })
     }
-
+    //-------------------------Hit the api when user search for a song---------------------//
     private fun searchSongs(query: String) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")

@@ -35,7 +35,12 @@ class MainActivity : AppCompatActivity() {
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
                         val username = document.getString("name")
-                        binding.username.text = "Welcome $username"
+                        val drawerUsername:TextView=findViewById(R.id.drawerusername)
+
+                        binding.username.text = "Welcome ${username?.let { getFirstName(it) }}"
+
+                        drawerUsername.text= username?.let { getFirstName(it) }
+
                     } else {
                         binding.username.text = "User not found"
                         Log.d("MainActivity", "Document does not exist")
@@ -62,7 +67,9 @@ class MainActivity : AppCompatActivity() {
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
     }
-
+    private fun getFirstName(username: String): String {
+        return username.split(" ").firstOrNull() ?: ""
+    }
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener {
             toggleDrawer()

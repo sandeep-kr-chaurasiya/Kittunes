@@ -9,7 +9,7 @@
     android:background="@color/black">
 
     <LinearLayout
-        android:id="@+id/musicplayertoolbar"
+        android:id="@+id/MusicPlayerToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/song_image"
+        android:id="@+id/cover"
         android:layout_width="370dp"
         android:layout_height="370dp"
         android:layout_marginTop="50dp"
@@ -55,10 +55,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/musicplayertoolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/MusicPlayerToolbar"/>
 
     <TextView
-        android:id="@+id/song_title"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -69,10 +69,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.105"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/song_image" />
+        app:layout_constraintTop_toBottomOf="@id/cover" />
 
     <TextView
-        android:id="@+id/song_artist"
+        android:id="@+id/artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_semibold"
@@ -82,20 +82,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/song_title" />
+        app:layout_constraintTop_toBottomOf="@+id/title"/>
 
     <SeekBar
         android:id="@+id/seek_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:progress="60"
+        android:progress="10"
         android:thumbTint="@color/orange"
         android:progressTint="@color/orange"
         android:progressBackgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/song_artist" />
+        app:layout_constraintTop_toBottomOf="@id/artist" />
 
 
     <TextView
