@@ -16,7 +16,6 @@ class SearchAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: SearchCardBinding = SearchCardBinding.bind(itemView)
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = SearchCardBinding.inflate(layoutInflater, parent, false)
