@@ -11,8 +11,7 @@ class SearchAdapter(
     private var dataList: List<Data>,
     private val onPlayClick: (Data) -> Unit,
     private val onPauseClick: (Data) -> Unit,
-
-) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+    ):RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: SearchCardBinding = SearchCardBinding.bind(itemView)
@@ -37,6 +36,7 @@ class SearchAdapter(
         Glide.with(holder.itemView.context).load(song.album.cover_medium).into(holder.binding.songThumbnail)
 
 //-------------------------working from search fragment by extending the class---------------------//
+
         holder.binding.playButton.setOnClickListener {
             onPlayClick(song)
             holder.binding.playButton.visibility = View.GONE
@@ -48,6 +48,7 @@ class SearchAdapter(
             holder.binding.playButton.visibility = View.VISIBLE
             holder.binding.pauseButton.visibility = View.GONE
         }
+
     }
 
     fun updateData(newDataList: List<Data>) {
