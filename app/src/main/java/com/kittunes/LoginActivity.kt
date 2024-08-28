@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        finishAffinity()
     }
 
     private fun showError(message: String) {

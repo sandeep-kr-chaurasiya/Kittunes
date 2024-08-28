@@ -33,10 +33,10 @@ class SearchAdapter(
         holder.binding.songTitle.text = song.title
         holder.binding.artistName.text = song.artist.name
 
-        Glide.with(holder.itemView.context)
-            .load(song.album.cover_medium)
-            .into(holder.binding.songThumbnail)
+//-------------------------load the image of the song using Glide---------------------//
+        Glide.with(holder.itemView.context).load(song.album.cover_medium).into(holder.binding.songThumbnail)
 
+//-------------------------working from search fragment by extending the class---------------------//
         holder.binding.playButton.setOnClickListener {
             onPlayClick(song)
             holder.binding.playButton.visibility = View.GONE

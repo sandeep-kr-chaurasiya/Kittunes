@@ -35,6 +35,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             dismiss()
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

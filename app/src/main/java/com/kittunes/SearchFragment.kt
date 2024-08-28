@@ -42,7 +42,6 @@ class SearchFragment : Fragment() {
                 query?.let { searchSongs(it) }
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrEmpty()) {
                     clearSearchResults()
@@ -61,8 +60,8 @@ class SearchFragment : Fragment() {
             .build()
             .create(ApiInterface::class.java)
 
-        val call = retrofit.getdata(query)
-        call.enqueue(object : Callback<MyData?> {
+            val call = retrofit.getdata(query)
+            call.enqueue(object : Callback<MyData?> {
             override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
                 if (response.isSuccessful) {
                     val dataList = response.body()?.data ?: emptyList()
@@ -72,7 +71,6 @@ class SearchFragment : Fragment() {
                     Toast.makeText(requireContext(), "Error loading search results", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<MyData?>, t: Throwable) {
                 Log.e("SearchFragment", "API call failed: ${t.message}")
                 Toast.makeText(requireContext(), "Failed to load search results", Toast.LENGTH_SHORT).show()
@@ -85,23 +83,22 @@ class SearchFragment : Fragment() {
     }
 
     private fun playSong(song: Data) {
-        if (currentPlayingSong != song) {
+        if (currentPlayingSong == song) {
+            mediaPlayer?.start()
+
+        }else{
             releaseMediaPlayer()
             mediaPlayer = MediaPlayer().apply {
-                setDataSource(song.preview)
-                prepareAsync()
-                setOnPreparedListener {
-                    start()
-                }
-                setOnCompletionListener {
-                    currentPlayingSong = null
-                    adapter.notifyDataSetChanged()
-                }
+            setDataSource(song.preview)
+            setOnPreparedListener { start() }
+            setOnCompletionListener {
+                currentPlayingSong = null
+                adapter.notifyDataSetChanged()
             }
-            currentPlayingSong = song
-        } else {
-            mediaPlayer?.start()
+            prepareAsync()
         }
+        currentPlayingSong = song
+    }
     }
 
     private fun pauseSong(song: Data) {
@@ -109,8 +106,6 @@ class SearchFragment : Fragment() {
             mediaPlayer?.pause()
         }
     }
-
-
     private fun releaseMediaPlayer() {
         mediaPlayer?.release()
         mediaPlayer = null
