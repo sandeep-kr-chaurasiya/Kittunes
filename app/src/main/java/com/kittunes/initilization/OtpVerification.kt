@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.initilization
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -14,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kittunes.MainActivity
+import com.kittunes.R
 import com.kittunes.databinding.ActivityOtpVerificationBinding
 
 class OtpVerification : AppCompatActivity() {

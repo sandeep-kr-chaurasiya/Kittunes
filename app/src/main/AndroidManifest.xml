@@ -28,19 +28,19 @@
 
         <!-- Other Activities -->
         <activity
-            android:name=".Welcome"
+            android:name=".initilization.Welcome"
             android:exported="false" />
         <activity
             android:name=".ActivityDrawer"
             android:exported="false" />
         <activity
-            android:name=".OtpVerification"
+            android:name=".initilization.OtpVerification"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".initilization.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupActivity"
+            android:name=".initilization.SignupActivity"
             android:exported="false" />
 
         <!-- Metadata for Preloaded Fonts -->

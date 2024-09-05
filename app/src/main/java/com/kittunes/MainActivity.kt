@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.databinding.ActivityMainBinding
+import com.kittunes.initilization.Welcome
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
