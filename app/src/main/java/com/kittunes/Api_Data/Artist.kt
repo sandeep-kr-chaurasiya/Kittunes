@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.Api_Data
 
 data class Artist(
     val id: Int,

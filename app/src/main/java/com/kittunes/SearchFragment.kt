@@ -10,6 +10,9 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kittunes.Api.ApiInterface
+import com.kittunes.Api_Data.Data
+import com.kittunes.Api_Data.MyData
 import com.kittunes.databinding.FragmentSearchBinding
 import retrofit2.Call
 import retrofit2.Callback

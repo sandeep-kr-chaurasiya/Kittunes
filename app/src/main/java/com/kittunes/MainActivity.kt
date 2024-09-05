@@ -38,9 +38,7 @@ class MainActivity : AppCompatActivity() {
                         val drawerUsername:TextView=findViewById(R.id.drawerusername)
 
                         binding.username.text = "Welcome ${username?.let { getFirstName(it) }}"
-
                         drawerUsername.text= username?.let { getFirstName(it) }
-
                     } else {
                         binding.username.text = "User not found"
                         Log.d("MainActivity", "Document does not exist")

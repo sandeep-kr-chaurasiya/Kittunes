@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.kittunes.Api_Data.Data
 import com.kittunes.databinding.SearchCardBinding
 
 class SearchAdapter(
