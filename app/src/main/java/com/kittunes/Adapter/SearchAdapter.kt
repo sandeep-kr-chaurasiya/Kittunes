@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.Adapter
 
 import android.view.LayoutInflater
 import android.view.View

@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.databinding.ActivityMainBinding
+import com.kittunes.fragments.HomeFragment
+import com.kittunes.fragments.LibraryFragment
+import com.kittunes.fragments.SearchFragment
+import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
 
 class MainActivity : AppCompatActivity() {

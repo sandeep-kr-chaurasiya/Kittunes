@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.fragments
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -10,6 +10,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
