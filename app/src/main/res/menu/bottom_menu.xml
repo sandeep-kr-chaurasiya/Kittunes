@@ -4,7 +4,6 @@
     android:id="@+id/bottom_home"
     android:title="Home"
     android:icon="@drawable/home" />
-
     <item
         android:id="@+id/bottom_search"
         android:title="Search"
@@ -13,7 +12,5 @@
         android:id="@+id/bottom_library"
         android:title="Library"
         android:icon="@drawable/library"/>
-
-
 
 </menu>
