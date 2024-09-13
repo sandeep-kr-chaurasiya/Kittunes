@@ -51,36 +51,5 @@
                 android:text="Artist Name" />
         </LinearLayout>
 
-        <!-- Buttons for Play and Pause -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:gravity="end"
-            android:layout_gravity="center">
-
-            <!-- Play Button -->
-            <ImageButton
-                android:id="@+id/play_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/play1"
-                android:layout_marginEnd="20dp"
-                app:tint="@color/white"
-                android:background="@color/transparent" />
-
-            <ImageButton
-                android:visibility="gone"
-                android:id="@+id/pause_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/pause"
-                android:layout_marginEnd="20dp"
-                app:tint="@color/white"
-                android:background="@color/transparent" />
-
-
-        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

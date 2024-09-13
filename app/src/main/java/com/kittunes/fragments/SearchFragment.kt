@@ -22,10 +22,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchFragment : Fragment() {
+
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
     private var mediaPlayer: MediaPlayer? = null
     private var currentPlayingSong: Data? = null
+
+    private val apiInterface by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiInterface::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,45 +45,41 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        setupSearchBar()
+    }
 
+    private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = SearchAdapter(emptyList(), ::playSong, ::pauseSong)
+        adapter = SearchAdapter { onSongClicked(it) }
         binding.recyclerView.adapter = adapter
+    }
 
+    private fun setupSearchBar() {
         binding.searchbar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { searchSongs(it) }
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty()) {
-                    clearSearchResults()
-                } else {
-                    searchSongs(newText)
-                }
+                if (newText.isNullOrEmpty()) clearSearchResults() else searchSongs(newText)
                 return true
             }
         })
     }
-    //-------------------------Hit the api when user search for a song---------------------//
-    private fun searchSongs(query: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiInterface::class.java)
 
-            val call = retrofit.getdata(query)
-            call.enqueue(object : Callback<MyData?> {
+    private fun searchSongs(query: String) {
+        apiInterface.getdata(query).enqueue(object : Callback<MyData?> {
             override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
                 if (response.isSuccessful) {
                     val dataList = response.body()?.data ?: emptyList()
-                    adapter.updateData(dataList)
+                    adapter.submitList(dataList)
                 } else {
-                    Log.e("SearchFragment", "Response unsuccessful: ${response.errorBody()}")
-                    Toast.makeText(requireContext(), "Error loading search results", Toast.LENGTH_SHORT).show()
+                    showError("Error loading search results")
                 }
             }
+
             override fun onFailure(call: Call<MyData?>, t: Throwable) {
                 Log.e("SearchFragment", "API call failed: ${t.message}")
                 Toast.makeText(requireContext(), "Failed to load search results", Toast.LENGTH_SHORT).show()
@@ -82,34 +87,26 @@ class SearchFragment : Fragment() {
         })
     }
 
+    private fun showError(message: String) {
+        Log.e("SearchFragment", message)
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun clearSearchResults() {
-        adapter.updateData(emptyList())
+        adapter.submitList(emptyList())
     }
 
-    private fun playSong(song: Data) {
-        if (currentPlayingSong == song) {
-            mediaPlayer?.start()
-
-        }else{
-            releaseMediaPlayer()
-            mediaPlayer = MediaPlayer().apply {
-            setDataSource(song.preview)
-            setOnPreparedListener { start() }
-            setOnCompletionListener {
-                currentPlayingSong = null
-                adapter.notifyDataSetChanged()
-            }
-            prepareAsync()
+    private fun onSongClicked(song: Data) {
+        val existingFragment = childFragmentManager.findFragmentByTag("SongDetailBottomFragment") as? SongDetailBottomFragment
+        if (existingFragment != null) {
+            existingFragment.updateSongData(song)
+        } else {
+            SongDetailBottomFragment.newInstance(song).show(childFragmentManager, "SongDetailBottomFragment")
         }
-        currentPlayingSong = song
-    }
+
     }
 
-    private fun pauseSong(song: Data) {
-        if (currentPlayingSong == song && mediaPlayer?.isPlaying == true) {
-            mediaPlayer?.pause()
-        }
-    }
+
     private fun releaseMediaPlayer() {
         mediaPlayer?.release()
         mediaPlayer = null

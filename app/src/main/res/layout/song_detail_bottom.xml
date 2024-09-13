@@ -89,7 +89,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:progress="10"
+        android:progress="0"
         android:thumbTint="@color/orange"
         android:progressTint="@color/orange"
         android:progressBackgroundTint="@color/white"

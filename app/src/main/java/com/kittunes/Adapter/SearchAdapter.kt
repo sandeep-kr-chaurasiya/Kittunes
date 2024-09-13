@@ -1,59 +1,44 @@
 package com.kittunes.Adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kittunes.Api_Data.Data
 import com.kittunes.databinding.SearchCardBinding
 
-class SearchAdapter(
-    private var dataList: List<Data>,
-    private val onPlayClick: (Data) -> Unit,
-    private val onPauseClick: (Data) -> Unit,
-    ):RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+class SearchAdapter(private val onSongClicked: (Data) -> Unit) : ListAdapter<Data, SearchAdapter.SongViewHolder>(SongDiffCallback()) {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding: SearchCardBinding = SearchCardBinding.bind(itemView)
-    }
+    inner class SongViewHolder(private val binding: SearchCardBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(song: Data) {
+            binding.songTitle.text = song.title
+            binding.artistName.text = song.artist.name
+            Glide.with(binding.root.context)
+                .load(song.album.cover_medium)
+                .into(binding.songThumbnail)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = SearchCardBinding.inflate(layoutInflater, parent, false)
-        return ViewHolder(binding.root)
-    }
-
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val song = dataList[position]
-        holder.binding.songTitle.text = song.title
-        holder.binding.artistName.text = song.artist.name
-
-//-------------------------load the image of the song using Glide---------------------//
-        Glide.with(holder.itemView.context).load(song.album.cover_medium).into(holder.binding.songThumbnail)
-
-//-------------------------working from search fragment by extending the class---------------------//
-
-        holder.binding.playButton.setOnClickListener {
-            onPlayClick(song)
-            holder.binding.playButton.visibility = View.GONE
-            holder.binding.pauseButton.visibility = View.VISIBLE
+            binding.searchcard.setOnClickListener { onSongClicked(song) }
         }
-
-        holder.binding.pauseButton.setOnClickListener {
-            onPauseClick(song)
-            holder.binding.playButton.visibility = View.VISIBLE
-            holder.binding.pauseButton.visibility = View.GONE
-        }
-
     }
 
-    fun updateData(newDataList: List<Data>) {
-        dataList = newDataList
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+        val binding = SearchCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SongViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+}
+
+private class SongDiffCallback : DiffUtil.ItemCallback<Data>() {
+    override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
+        return oldItem == newItem
     }
 }
