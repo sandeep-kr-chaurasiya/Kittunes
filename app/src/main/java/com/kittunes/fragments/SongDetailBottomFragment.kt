@@ -41,8 +41,6 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val song = arguments?.getParcelable<Data>("song") ?: return
-
         // Configure bottom sheet behavior
         (dialog as? BottomSheetDialog)?.behavior?.apply {
             state = BottomSheetBehavior.STATE_EXPANDED
@@ -52,10 +50,10 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             skipCollapsed = true
         }
 
-        // Set up UI
-        binding.title.text = song.title
-        binding.artist.text = song.artist.name
-        Glide.with(this).load(song.album.cover_medium).into(binding.cover)
+        // Set up UI initially if song data is provided
+        arguments?.getParcelable<Data>("song")?.let { song ->
+            updateSongData(song)
+        }
 
         // Set up button listeners
         binding.down.setOnClickListener { dismiss() }
@@ -84,7 +82,14 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
 
         // Observe current song changes
         sharedViewModel.currentSong.observe(viewLifecycleOwner) { currentSong ->
-            currentSong?.let { playSong(it) }
+            currentSong?.let { updateSongData(it) }
+        }
+
+        // Observe current position changes
+        sharedViewModel.currentPosition.observe(viewLifecycleOwner) { position ->
+            if (::mediaPlayer.isInitialized) {
+                mediaPlayer.seekTo(position ?: 0)
+            }
         }
     }
 

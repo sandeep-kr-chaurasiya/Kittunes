@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.datastore.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,5 +61,11 @@ dependencies {
 
 
 
+        implementation (libs.androidx.lifecycle.viewmodel.ktx)
 
-}
+
+        implementation (libs.androidx.lifecycle.livedata.ktx)
+
+        // Fragment
+        implementation (libs.androidx.fragment.ktx)
+    }

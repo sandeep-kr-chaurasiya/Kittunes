@@ -99,6 +99,7 @@
                 android:paddingEnd="8dp">
 
                 <TextView
+                    android:maxLines="1"
                     android:id="@+id/song_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

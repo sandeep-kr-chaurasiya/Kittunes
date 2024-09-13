@@ -1,6 +1,6 @@
 package com.kittunes.fragments
 
-import android.media.MediaPlayer
+import SharedViewModel
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
@@ -23,10 +24,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchFragment : Fragment() {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
-    private var mediaPlayer: MediaPlayer? = null
-    private var currentPlayingSong: Data? = null
 
     private val apiInterface by lazy {
         Retrofit.Builder()
@@ -38,7 +38,8 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View {
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -63,7 +64,11 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty()) clearSearchResults() else searchSongs(newText)
+                if (newText.isNullOrEmpty()) {
+                    clearSearchResults()
+                } else {
+                    searchSongs(newText)
+                }
                 return true
             }
         })
@@ -76,19 +81,19 @@ class SearchFragment : Fragment() {
                     val dataList = response.body()?.data ?: emptyList()
                     adapter.submitList(dataList)
                 } else {
-                    showError("Error loading search results")
+                    showError("Error loading search results: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<MyData?>, t: Throwable) {
-                Log.e("SearchFragment", "API call failed: ${t.message}")
+                Log.e(TAG, "API call failed: ${t.message}", t)
                 Toast.makeText(requireContext(), "Failed to load search results", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun showError(message: String) {
-        Log.e("SearchFragment", message)
+        Log.e(TAG, message)
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
@@ -97,24 +102,16 @@ class SearchFragment : Fragment() {
     }
 
     private fun onSongClicked(song: Data) {
-        val existingFragment = childFragmentManager.findFragmentByTag("SongDetailBottomFragment") as? SongDetailBottomFragment
+        sharedViewModel.setCurrentSong(song)
+        val existingFragment = parentFragmentManager.findFragmentByTag("SongDetailBottomFragment") as? SongDetailBottomFragment
         if (existingFragment != null) {
             existingFragment.updateSongData(song)
         } else {
-            SongDetailBottomFragment.newInstance(song).show(childFragmentManager, "SongDetailBottomFragment")
+            val bottomSheetFragment = SongDetailBottomFragment.newInstance(song)
+            bottomSheetFragment.show(parentFragmentManager, "SongDetailBottomFragment")
         }
-
     }
-
-
-    private fun releaseMediaPlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-        currentPlayingSong = null
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        releaseMediaPlayer()
+    companion object {
+        private const val TAG = "SearchFragment"
     }
 }
