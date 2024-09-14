@@ -10,7 +10,7 @@ import com.kittunes.Api_Data.Data
 class MusicService : Service() {
 
     var mediaPlayer: MediaPlayer? = null
-    private var currentSong: Data? = null
+    var currentSong: Data? = null
     var currentPosition: Int = 0
 
     val isPlaying: Boolean
