@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             isBound = true
             Log.d("MainActivity", "MusicService bound")
         }
+
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
             Log.d("MainActivity", "MusicService unbound")
