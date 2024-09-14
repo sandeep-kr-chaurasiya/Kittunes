@@ -66,6 +66,11 @@ class MainActivity : AppCompatActivity() {
             currentSong?.let { updateSongData(it) }
         }
 
+        // Observe playing state changes to update the play/pause button
+        sharedViewModel.isPlaying.observe(this) { isPlaying ->
+            updatePlayPauseButton(isPlaying)
+        }
+
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { song ->
                 val bottomSheetFragment = SongDetailBottomFragment.newInstance(song, autoPlay = false)
@@ -80,6 +85,8 @@ class MainActivity : AppCompatActivity() {
             musicService = musicBinder.getService()
             isBound = true
             Log.d("MainActivity", "MusicService bound")
+            // Set initial playing state
+            sharedViewModel.setPlayingState(musicService?.isPlaying == true)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -170,15 +177,14 @@ class MainActivity : AppCompatActivity() {
         Glide.with(this)
             .load(song.album.cover_medium)
             .into(binding.songImage)
-        updatePlayPauseButton()
 
+        // Check if song is different from the one currently playing in MusicService
         if (musicService?.currentSong != song) {
             musicService?.playSong(song)
         }
     }
 
-    private fun updatePlayPauseButton() {
-        val isPlaying = musicService?.isPlaying ?: false
+    private fun updatePlayPauseButton(isPlaying: Boolean) {
         val playPauseButton = binding.playButton
         playPauseButton.setImageResource(
             if (isPlaying) R.drawable.pause else R.drawable.play
@@ -186,12 +192,11 @@ class MainActivity : AppCompatActivity() {
         playPauseButton.setOnClickListener {
             if (isPlaying) {
                 musicService?.pausePlayback()
-                sharedViewModel.setCurrentPosition(musicService?.mediaPlayer?.currentPosition ?: 0)
+                sharedViewModel.setPlayingState(false)
             } else {
                 musicService?.resumePlayback()
-                sharedViewModel.setCurrentPosition(musicService?.mediaPlayer?.currentPosition ?: 0)
+                sharedViewModel.setPlayingState(true)
             }
-            updatePlayPauseButton()
         }
     }
 
