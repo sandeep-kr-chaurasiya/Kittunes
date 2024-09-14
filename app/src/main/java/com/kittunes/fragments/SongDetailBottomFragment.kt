@@ -1,4 +1,3 @@
-// SongDetailBottomFragment.kt
 package com.kittunes.fragments
 
 import SharedViewModel
@@ -7,11 +6,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firestore.v1.FirestoreGrpc.bindService
 import com.kittunes.Api_Data.Data
 import com.kittunes.R
 import com.kittunes.databinding.SongDetailBottomBinding
@@ -34,13 +29,13 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var musicService: MusicService? = null
     private var isBound = false
+    private var shouldAutoPlay: Boolean = false
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val musicBinder = binder as MusicService.MusicBinder
             musicService = musicBinder.getService()
             isBound = true
-            // Update UI or state as needed
             arguments?.getParcelable<Data>("song")?.let { song ->
                 updateSongData(song)
             }
@@ -84,20 +79,23 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
         // Initialize seek bar
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser && isBound) musicService?.mediaPlayer?.seekTo(progress)
+                if (fromUser && isBound) {
+                    musicService?.mediaPlayer?.seekTo(progress)
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        // Observe current song and position changes
         sharedViewModel.currentSong.observe(viewLifecycleOwner) { currentSong ->
             currentSong?.let { updateSongData(it) }
         }
 
         sharedViewModel.currentPosition.observe(viewLifecycleOwner) { position ->
-            if (isBound) musicService?.mediaPlayer?.seekTo(position ?: 0)
+            if (isBound) {
+                binding.seekBar.progress = position ?: 0
+            }
         }
     }
 
@@ -118,9 +116,9 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     }
 
     private fun formatTime(ms: Int): String {
-        val minutes = (ms / 1000) / 60
-        val seconds = (ms / 1000) % 60
-        return "${minutes}:${seconds.toString().padStart(2, '0')}"
+        val minutes = ms / 60000
+        val seconds = (ms % 60000) / 1000
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     fun updateSongData(song: Data) {
@@ -128,23 +126,31 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
         binding.artist.text = song.artist.name
         Glide.with(this).load(song.album.cover_medium).into(binding.cover)
 
-        if (isBound) {
+        if (isBound && shouldAutoPlay) {
             musicService?.playSong(song)
+            updatePlayPauseButton()
         }
+    }
+
+    private fun updatePlayPauseButton() {
+        val isPlaying = musicService?.isPlaying ?: false
+        binding.btnPlayPause.setImageResource(
+            if (isPlaying) R.drawable.pause else R.drawable.play
+        )
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(song: Data) = SongDetailBottomFragment().apply {
+        fun newInstance(song: Data, autoPlay: Boolean = false) = SongDetailBottomFragment().apply {
             arguments = Bundle().apply {
                 putParcelable("song", song)
+                putBoolean("autoPlay", autoPlay)
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        // Bind to the MusicService
         val serviceIntent = Intent(requireContext(), MusicService::class.java)
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
@@ -160,6 +166,5 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        // Remove callbacks if needed
     }
 }

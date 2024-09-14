@@ -14,7 +14,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { song ->
-                val bottomSheetFragment = SongDetailBottomFragment.newInstance(song)
+                val bottomSheetFragment = SongDetailBottomFragment.newInstance(song, autoPlay = false)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
             } ?: Log.d("MainActivity", "No current song to display")
         }
@@ -83,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             isBound = true
             Log.d("MainActivity", "MusicService bound")
         }
-
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
             Log.d("MainActivity", "MusicService unbound")
@@ -172,14 +170,30 @@ class MainActivity : AppCompatActivity() {
         Glide.with(this)
             .load(song.album.cover_medium)
             .into(binding.songImage)
+        updatePlayPauseButton()
 
-        // Update play/pause button state based on `MusicService`
-        val playButton = binding.currentsong.findViewById<ImageButton>(R.id.play_button)
+        if (musicService?.currentSong != song) {
+            musicService?.playSong(song)
+        }
+    }
+
+    private fun updatePlayPauseButton() {
         val isPlaying = musicService?.isPlaying ?: false
-        playButton.setImageResource(
-            if (sharedViewModel.currentSong.value == song && isPlaying) R.drawable.pause
-            else R.drawable.play
+        val playPauseButton = binding.playButton
+        playPauseButton.setImageResource(
+            if (isPlaying) R.drawable.pause else R.drawable.play
         )
+
+        playPauseButton.setOnClickListener {
+            if (isPlaying) {
+                musicService?.pausePlayback()
+                sharedViewModel.setCurrentPosition(musicService?.mediaPlayer?.currentPosition ?: 0)
+            } else {
+                musicService?.resumePlayback()
+                sharedViewModel.setCurrentPosition(musicService?.mediaPlayer?.currentPosition ?: 0)
+            }
+            updatePlayPauseButton()
+        }
     }
 
     private fun redirectToWelcome() {

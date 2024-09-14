@@ -16,6 +16,7 @@ import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
 import com.kittunes.databinding.FragmentSearchBinding
+import com.kittunes.services.MusicService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,7 +28,7 @@ class SearchFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
-
+    private var musicService: MusicService? = null
     private val apiInterface by lazy {
         Retrofit.Builder()
             .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
@@ -72,6 +73,7 @@ class SearchFragment : Fragment() {
                 return true
             }
         })
+        binding.searchbar.isFocusable = false
     }
 
     private fun searchSongs(query: String) {
@@ -103,14 +105,7 @@ class SearchFragment : Fragment() {
 
     private fun onSongClicked(song: Data) {
         sharedViewModel.setCurrentSong(song)
-        val bottomSheetFragmentTag = "SongDetailBottomFragment"
-        val existingFragment = parentFragmentManager.findFragmentByTag(bottomSheetFragmentTag) as? SongDetailBottomFragment
-        if (existingFragment != null) {
-            existingFragment.updateSongData(song)
-        } else {
-            val bottomSheetFragment = SongDetailBottomFragment.newInstance(song)
-            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragmentTag)
-        }
+        musicService?.playSong(song)
     }
 
     companion object {
