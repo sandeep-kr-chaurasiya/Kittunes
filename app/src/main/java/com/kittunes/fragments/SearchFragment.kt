@@ -64,7 +64,7 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrEmpty()) {
+                if (newText.isNullOrBlank()) {
                     clearSearchResults()
                 } else {
                     searchSongs(newText)
@@ -103,14 +103,16 @@ class SearchFragment : Fragment() {
 
     private fun onSongClicked(song: Data) {
         sharedViewModel.setCurrentSong(song)
-        val existingFragment = parentFragmentManager.findFragmentByTag("SongDetailBottomFragment") as? SongDetailBottomFragment
+        val bottomSheetFragmentTag = "SongDetailBottomFragment"
+        val existingFragment = parentFragmentManager.findFragmentByTag(bottomSheetFragmentTag) as? SongDetailBottomFragment
         if (existingFragment != null) {
             existingFragment.updateSongData(song)
         } else {
             val bottomSheetFragment = SongDetailBottomFragment.newInstance(song)
-            bottomSheetFragment.show(parentFragmentManager, "SongDetailBottomFragment")
+            bottomSheetFragment.show(parentFragmentManager, bottomSheetFragmentTag)
         }
     }
+
     companion object {
         private const val TAG = "SearchFragment"
     }

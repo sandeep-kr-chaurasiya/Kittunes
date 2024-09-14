@@ -1,8 +1,12 @@
 package com.kittunes
 
 import SharedViewModel
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
@@ -22,7 +26,6 @@ import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.services.MusicService
 import com.kittunes.initilization.Welcome
-import android.media.MediaPlayer
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +33,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val sharedViewModel: SharedViewModel by viewModels()
-    private var mediaPlayer: MediaPlayer? = null
+    private var musicService: MusicService? = null
+    private var isBound = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,16 +58,35 @@ class MainActivity : AppCompatActivity() {
         // Load the default fragment
         replaceFragment(HomeFragment())
 
+        // Start and bind to MusicService
+        val serviceIntent = Intent(this, MusicService::class.java)
+        startService(serviceIntent)
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+
         // Observe current song changes
-        sharedViewModel.currentSong.observe(this, Observer { currentSong ->
+        sharedViewModel.currentSong.observe(this) { currentSong ->
             currentSong?.let { updateSongData(it) }
-        })
+        }
 
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { song ->
                 val bottomSheetFragment = SongDetailBottomFragment.newInstance(song)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
             } ?: Log.d("MainActivity", "No current song to display")
+        }
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val musicBinder = binder as MusicService.MusicBinder
+            musicService = musicBinder.getService()
+            isBound = true
+            Log.d("MainActivity", "MusicService bound")
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+            Log.d("MainActivity", "MusicService unbound")
         }
     }
 
@@ -150,11 +173,11 @@ class MainActivity : AppCompatActivity() {
             .load(song.album.cover_medium)
             .into(binding.songImage)
 
-
-        // Update play/pause button state
+        // Update play/pause button state based on `MusicService`
         val playButton = binding.currentsong.findViewById<ImageButton>(R.id.play_button)
+        val isPlaying = musicService?.isPlaying ?: false
         playButton.setImageResource(
-            if (mediaPlayer?.isPlaying == true) R.drawable.pause
+            if (sharedViewModel.currentSong.value == song && isPlaying) R.drawable.pause
             else R.drawable.play
         )
     }
@@ -166,6 +189,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+            Log.d("MainActivity", "Unbound MusicService")
+        }
+        stopService(Intent(this, MusicService::class.java))
     }
 }

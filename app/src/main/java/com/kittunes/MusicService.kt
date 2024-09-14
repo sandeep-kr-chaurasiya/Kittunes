@@ -9,7 +9,7 @@ import com.kittunes.Api_Data.Data
 
 class MusicService : Service() {
 
-    private var mediaPlayer: MediaPlayer? = null
+    var mediaPlayer: MediaPlayer? = null
     private var currentSong: Data? = null
     var currentPosition: Int = 0
 
@@ -26,7 +26,7 @@ class MusicService : Service() {
         return binder
     }
 
-    fun playSong(song: com.kittunes.Api_Data.Data) {
+    fun playSong(song: Data) {
         if (currentSong == song && mediaPlayer != null) {
             mediaPlayer?.seekTo(currentPosition)
             mediaPlayer?.start()
@@ -41,6 +41,7 @@ class MusicService : Service() {
                 }
                 setOnCompletionListener {
                     currentSong = null
+                    this@MusicService.currentPosition = 0
                 }
                 prepareAsync()
             }
@@ -74,5 +75,10 @@ class MusicService : Service() {
         mediaPlayer = null
         currentSong = null
         currentPosition = 0
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseMediaPlayer()
     }
 }

@@ -5,8 +5,8 @@ import com.kittunes.Api_Data.Data
 
 class SharedViewModel : ViewModel() {
 
-    private val _currentSong = MutableLiveData<com.kittunes.Api_Data.Data?>()
-    val currentSong: MutableLiveData<Data?> get() = _currentSong
+    private val _currentSong = MutableLiveData<Data?>()
+    val currentSong: LiveData<Data?> get() = _currentSong
 
     private val _currentPosition = MutableLiveData<Int>()
     val currentPosition: LiveData<Int> get() = _currentPosition
