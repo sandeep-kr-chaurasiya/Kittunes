@@ -65,6 +65,7 @@
         <LinearLayout
             android:layout_marginHorizontal="3dp"
             android:id="@+id/currentsong"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/curveborder"

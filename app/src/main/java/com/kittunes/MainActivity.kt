@@ -27,7 +27,7 @@ import com.kittunes.initilization.Welcome
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val sharedViewModel: SharedViewModel by viewModels()
@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         setupDrawerNavigation()
         setupBottomNavigation()
 
-        // Load the default fragment
         replaceFragment(HomeFragment())
 
         // Start and bind to MusicService
@@ -187,7 +186,7 @@ class MainActivity : AppCompatActivity() {
     private fun updatePlayPauseButton(isPlaying: Boolean) {
         val playPauseButton = binding.playButton
         playPauseButton.setImageResource(
-            if (isPlaying) R.drawable.pause else R.drawable.play
+            if (isPlaying) R.drawable.pause else R.drawable.play1
         )
         playPauseButton.setOnClickListener {
             if (isPlaying) {

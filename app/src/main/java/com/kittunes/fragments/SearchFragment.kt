@@ -1,7 +1,12 @@
 package com.kittunes.fragments
 
 import SharedViewModel
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +21,7 @@ import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
+import com.kittunes.MainActivity
 import com.kittunes.databinding.FragmentSearchBinding
 import com.kittunes.services.MusicService
 import retrofit2.Call
@@ -30,6 +36,7 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
     private var musicService: MusicService? = null
+    private var isBound = false
     private val apiInterface by lazy {
         Retrofit.Builder()
             .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
@@ -50,6 +57,7 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupSearchBar()
+        bindMusicService()
     }
 
     private fun setupRecyclerView() {
@@ -106,7 +114,42 @@ class SearchFragment : Fragment() {
 
     private fun onSongClicked(song: Data) {
         sharedViewModel.setCurrentSong(song)
-        musicService?.playSong(song)
+        sharedViewModel.setPlayingState(true) // Notify that music is playing
+        if (isBound) {
+            musicService?.playSong(song)
+        } else {
+            Log.w(TAG, "MusicService is not bound. Unable to play song.")
+        }
+        (activity as? MainActivity)?.let { mainActivity ->
+            mainActivity.binding.currentsong.visibility = View.VISIBLE
+        }
+    }
+
+    private fun bindMusicService() {
+        val serviceIntent = Intent(requireContext(), MusicService::class.java)
+        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val musicBinder = binder as MusicService.MusicBinder
+            musicService = musicBinder.getService()
+            isBound = true
+            Log.d(TAG, "MusicService bound")
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+            Log.d(TAG, "MusicService unbound")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            requireContext().unbindService(serviceConnection)
+            isBound = false
+        }
     }
 
     companion object {
