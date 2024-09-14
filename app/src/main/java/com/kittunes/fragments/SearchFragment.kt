@@ -15,7 +15,6 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.findFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
@@ -37,6 +36,7 @@ class SearchFragment : Fragment() {
     private lateinit var adapter: SearchAdapter
     private var musicService: MusicService? = null
     private var isBound = false
+
     private val apiInterface by lazy {
         Retrofit.Builder()
             .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
@@ -114,15 +114,13 @@ class SearchFragment : Fragment() {
 
     private fun onSongClicked(song: Data) {
         sharedViewModel.setCurrentSong(song)
-        sharedViewModel.setPlayingState(true) // Notify that music is playing
+        sharedViewModel.setPlayingState(true)
         if (isBound) {
             musicService?.playSong(song)
         } else {
             Log.w(TAG, "MusicService is not bound. Unable to play song.")
         }
-        (activity as? MainActivity)?.let { mainActivity ->
-            mainActivity.binding.currentsong.visibility = View.VISIBLE
-        }
+        (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
     }
 
     private fun bindMusicService() {
@@ -132,14 +130,15 @@ class SearchFragment : Fragment() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val musicBinder = binder as MusicService.MusicBinder
-            musicService = musicBinder.getService()
+            val musicBinder = binder as? MusicService.MusicBinder
+            musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
+            musicService = null
             Log.d(TAG, "MusicService unbound")
         }
     }

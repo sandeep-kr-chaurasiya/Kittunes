@@ -74,23 +74,24 @@ class MainActivity : AppCompatActivity() {
             sharedViewModel.currentSong.value?.let { song ->
                 val bottomSheetFragment = SongDetailBottomFragment.newInstance(song, autoPlay = false)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-            } ?: Log.d("MainActivity", "No current song to display")
+            } ?: Log.d(TAG, "No current song to display")
         }
     }
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val musicBinder = binder as MusicService.MusicBinder
-            musicService = musicBinder.getService()
+            val musicBinder = binder as? MusicService.MusicBinder
+            musicService = musicBinder?.getService()
             isBound = true
-            Log.d("MainActivity", "MusicService bound")
+            Log.d(TAG, "MusicService bound")
             // Set initial playing state
             sharedViewModel.setPlayingState(musicService?.isPlaying == true)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
-            Log.d("MainActivity", "MusicService unbound")
+            musicService = null
+            Log.d(TAG, "MusicService unbound")
         }
     }
 
@@ -104,12 +105,12 @@ class MainActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.drawerusername).text = firstName
                 }
                 .addOnFailureListener { exception ->
-                    Log.e("MainActivity", "Error fetching user details", exception)
+                    Log.e(TAG, "Error fetching user details", exception)
                     binding.username.text = "Error fetching username"
                 }
         } ?: run {
             binding.username.text = "User not logged in"
-            Log.d("MainActivity", "User is not logged in")
+            Log.d(TAG, "User is not logged in")
         }
     }
 
@@ -133,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                     auth.signOut()
                     redirectToWelcome()
                 }
-                else -> Log.e("MainActivity", "Unknown drawer item selected")
+                else -> Log.e(TAG, "Unknown drawer item selected")
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -143,23 +144,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.bottom_home -> {
-                    replaceFragment(HomeFragment())
-                    true
-                }
-                R.id.bottom_search -> {
-                    replaceFragment(SearchFragment())
-                    true
-                }
-                R.id.bottom_library -> {
-                    replaceFragment(LibraryFragment())
-                    true
-                }
+                R.id.bottom_home -> replaceFragment(HomeFragment())
+                R.id.bottom_search -> replaceFragment(SearchFragment())
+                R.id.bottom_library -> replaceFragment(LibraryFragment())
                 else -> {
-                    Log.e("MainActivity", "Unknown bottom navigation item selected")
-                    false
+                    Log.e(TAG, "Unknown bottom navigation item selected")
+                    return@setOnItemSelectedListener false
                 }
             }
+            true
         }
     }
 
@@ -170,7 +163,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSongData(song: Data) {
-        Log.d("MainActivity", "Updating song data: ${song.title}")
+        Log.d(TAG, "Updating song data: ${song.title}")
         binding.songTitle.text = song.title
         binding.artistName.text = song.artist.name
         Glide.with(this)
@@ -209,8 +202,12 @@ class MainActivity : AppCompatActivity() {
         if (isBound) {
             unbindService(serviceConnection)
             isBound = false
-            Log.d("MainActivity", "Unbound MusicService")
+            Log.d(TAG, "Unbound MusicService")
         }
         stopService(Intent(this, MusicService::class.java))
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }

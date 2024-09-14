@@ -38,13 +38,12 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private val updateSeekBarTask = object : Runnable {
         override fun run() {
             if (isBound && musicService?.mediaPlayer != null) {
-                val currentPosition = musicService!!.mediaPlayer!!.currentPosition
-                val duration = musicService!!.mediaPlayer!!.duration
-                binding.seekBar.max = duration
-                binding.seekBar.progress = currentPosition
-                binding.currentTime.text = formatTime(currentPosition)
-                binding.duration.text = formatTime(duration)
-                handler.postDelayed(this, 1000)  // Schedule update every second
+                val mediaPlayer = musicService!!.mediaPlayer!!
+                binding.seekBar.max = mediaPlayer.duration
+                binding.seekBar.progress = mediaPlayer.currentPosition
+                binding.currentTime.text = formatTime(mediaPlayer.currentPosition)
+                binding.duration.text = formatTime(mediaPlayer.duration)
+                handler.postDelayed(this, 1000)  // Update every second
             }
         }
     }
@@ -54,13 +53,12 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
         private const val ARG_AUTO_PLAY = "arg_auto_play"
 
         fun newInstance(song: Data, autoPlay: Boolean): SongDetailBottomFragment {
-            val fragment = SongDetailBottomFragment()
-            val args = Bundle().apply {
-                putParcelable(ARG_SONG, song)
-                putBoolean(ARG_AUTO_PLAY, autoPlay)
+            return SongDetailBottomFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_SONG, song)
+                    putBoolean(ARG_AUTO_PLAY, autoPlay)
+                }
             }
-            fragment.arguments = args
-            return fragment
         }
     }
 
@@ -148,19 +146,17 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val musicBinder = binder as MusicService.MusicBinder
-            musicService = musicBinder.getService()
+            val musicBinder = binder as? MusicService.MusicBinder
+            musicService = musicBinder?.getService()
             isBound = true
 
             // Ensure button state reflects current playback state
             updatePlayPauseButton()
 
             // Initialize SeekBar to match current position when the service connects
-            if (musicService?.mediaPlayer?.isPlaying == true) {
-                val currentPosition = musicService?.mediaPlayer?.currentPosition ?: 0
-                val duration = musicService?.mediaPlayer?.duration ?: 0
-                binding.seekBar.max = duration
-                binding.seekBar.progress = currentPosition
+            musicService?.mediaPlayer?.let { mediaPlayer ->
+                binding.seekBar.max = mediaPlayer.duration
+                binding.seekBar.progress = mediaPlayer.currentPosition
             }
 
             // Start seek bar updates when service is connected
