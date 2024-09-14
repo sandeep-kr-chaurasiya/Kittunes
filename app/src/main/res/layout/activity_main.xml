@@ -128,7 +128,7 @@
                 android:background="@color/transparent"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/play"
+                android:src="@drawable/pause"
                 app:tint="@color/white" />
         </LinearLayout>
 
