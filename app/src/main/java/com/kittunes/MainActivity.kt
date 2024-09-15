@@ -1,6 +1,5 @@
 package com.kittunes
 
-import SharedViewModel
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -22,7 +21,6 @@ import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment
 import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
-import com.kittunes.services.MusicService
 import com.kittunes.initilization.Welcome
 
 class MainActivity : AppCompatActivity() {

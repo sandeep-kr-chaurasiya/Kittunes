@@ -1,4 +1,4 @@
-package com.kittunes.services
+package com.kittunes
 
 import android.app.Service
 import android.content.Intent
