@@ -1,6 +1,6 @@
 package com.kittunes.fragments
 
-import com.kittunes.SharedViewModel
+import SharedViewModel
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context

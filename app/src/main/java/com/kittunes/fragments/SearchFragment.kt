@@ -1,6 +1,7 @@
-package com.kittunes.fragments
+package com.kittunes
 
-import com.kittunes.SharedViewModel
+import SharedViewModel
+import ViewModelFactory
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -20,9 +21,7 @@ import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
-import com.kittunes.MainActivity
 import com.kittunes.databinding.FragmentSearchBinding
-import com.kittunes.MusicService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,7 +30,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchFragment : Fragment() {
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels {
+        ViewModelFactory(requireContext())
+    }
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
     private var musicService: MusicService? = null
@@ -114,12 +115,14 @@ class SearchFragment : Fragment() {
 
     private fun onSongClicked(song: Data) {
         sharedViewModel.setCurrentSong(song)
-        sharedViewModel.setPlayingState(true)
+        sharedViewModel.setPlayingState(true) // Set playing state to true
+
         if (isBound) {
             musicService?.playSong(song)
         } else {
             Log.w(TAG, "MusicService is not bound. Unable to play song.")
         }
+        // Ensure UI updates
         (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
     }
 

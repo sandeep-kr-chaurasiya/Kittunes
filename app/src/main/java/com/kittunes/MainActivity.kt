@@ -1,5 +1,7 @@
 package com.kittunes
 
+import SharedViewModel
+import ViewModelFactory
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -7,6 +9,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +22,6 @@ import com.kittunes.Api_Data.Data
 import com.kittunes.databinding.ActivityMainBinding
 import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment
-import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
 
@@ -28,9 +30,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val sharedViewModel: SharedViewModel by viewModels()
     private var musicService: MusicService? = null
     private var isBound = false
+    private val sharedViewModel: SharedViewModel by viewModels {
+        ViewModelFactory(applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +61,8 @@ class MainActivity : AppCompatActivity() {
         val serviceIntent = Intent(this, MusicService::class.java)
         startService(serviceIntent)
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-
+        // Restore playback state
+        restorePlaybackState()
         // Observe current song changes
         sharedViewModel.currentSong.observe(this) { currentSong ->
             currentSong?.let { updateSongData(it) }
@@ -76,14 +81,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun restorePlaybackState() {
+        val savedSong = sharedViewModel.currentSong.value
+        val isPlaying = sharedViewModel.isPlaying.value ?: false
+
+        if (savedSong != null) {
+            updateSongData(savedSong)
+            binding.currentsong.visibility = View.VISIBLE
+            // Do not auto-play; just update the UI
+            if (isBound && isPlaying) {
+                musicService?.pausePlayback()
+                sharedViewModel.setPlayingState(false)
+            }
+        }
+    }
+
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val musicBinder = binder as? MusicService.MusicBinder
             musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
-            // Set initial playing state
-            sharedViewModel.setPlayingState(musicService?.isPlaying == true)
+            // Restore playback state
+            restorePlaybackState()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
