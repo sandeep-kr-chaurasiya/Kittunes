@@ -14,14 +14,12 @@ class SearchAdapter(private val onSongClicked: (Data) -> Unit) : ListAdapter<Dat
 
     inner class SearchResultViewHolder(private val binding: SearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
-            binding.songTitle.text = song.title ?: "Unknown Title"  // Handle possible null values
-            binding.artistName.text = song.artist.name ?: "Unknown Artist"  // Handle possible null values
-
-            // Load the album cover using Glide with placeholder and error handling
+            binding.songTitle.text = song.title ?: "Unknown Title"
+            binding.artistName.text = song.artist.name ?: "Unknown Artist"
             Glide.with(binding.root.context)
-                .load(song.album.cover_medium)
-                .placeholder(R.drawable.dummyimage)  // Placeholder image while loading
-                .error(R.drawable.dummyimage)              // Error image if loading fails
+                .load(song.album.cover_big)
+                .placeholder(R.drawable.dummyimage)
+                .error(R.drawable.dummyimage)
                 .into(binding.songThumbnail)
 
             // Set the click listener for the song

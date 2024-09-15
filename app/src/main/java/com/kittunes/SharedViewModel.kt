@@ -16,12 +16,10 @@ class SharedViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData<Boolean>().apply { value = false }  // Initialize with false
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
-    // Set current song
     fun setCurrentSong(song: Data?) {
         _currentSong.value = song
     }
 
-    // Set current position of the song
     fun setCurrentPosition(position: Int) {
         _currentPosition.value = position
     }
