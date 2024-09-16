@@ -1,5 +1,6 @@
 package com.kittunes
 
+import android.annotation.SuppressLint
 import com.kittunes.player.SharedViewModel
 import com.kittunes.player.ViewModelFactory
 import android.content.ComponentName
@@ -130,6 +131,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupUserDetails() {
         auth.currentUser?.uid?.let { userId ->
             firestore.collection("users").document(userId).get()

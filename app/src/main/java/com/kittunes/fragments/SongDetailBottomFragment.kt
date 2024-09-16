@@ -141,7 +141,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     }
 
     private fun updateSongUI(song: Data) {
-        binding.title.text = song.title ?: "Unknown Title"
+        binding.title.text = song.title_short ?: "Unknown Title"
         binding.artist.text = song.artist.name ?: "Unknown Artist"
         Glide.with(requireContext())
             .load(song.album.cover_medium)
@@ -208,6 +208,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @SuppressLint("DefaultLocale")
     private fun formatTime(timeMs: Int): String {
         val minutes = (timeMs / 1000) / 60
         val seconds = (timeMs / 1000) % 60

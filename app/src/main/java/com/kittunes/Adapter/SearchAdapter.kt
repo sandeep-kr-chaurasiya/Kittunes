@@ -19,8 +19,8 @@ class SearchAdapter(
 
     inner class SearchResultViewHolder(private val binding: SearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
-            binding.songTitle.text = song.title ?: "Unknown Title"
-            binding.artistName.text = song.artist.name ?: "Unknown Artist"
+            binding.songTitle.text = song.title_short
+            binding.artistName.text = song.artist.name
             Glide.with(binding.root.context)
                 .load(song.album.cover_big)
                 .placeholder(R.drawable.dummyimage)
