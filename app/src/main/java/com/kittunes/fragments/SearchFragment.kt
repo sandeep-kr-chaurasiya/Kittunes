@@ -63,7 +63,10 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = SearchAdapter { onSongClicked(it) }
+        adapter = SearchAdapter(
+            onSongClicked = { song -> onSongClicked(song) },
+            onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) } // Pass the add to queue callback
+        )
         binding.recyclerView.adapter = adapter
     }
 
@@ -114,6 +117,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun onSongClicked(song: Data) {
+        sharedViewModel.addSongToQueue(song)
         sharedViewModel.setCurrentSong(song)
         sharedViewModel.setPlayingState(true) // Set playing state to true
 
@@ -122,7 +126,6 @@ class SearchFragment : Fragment() {
         } else {
             Log.w(TAG, "MusicService is not bound. Unable to play song.")
         }
-        // Ensure UI updates
         (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
     }
 

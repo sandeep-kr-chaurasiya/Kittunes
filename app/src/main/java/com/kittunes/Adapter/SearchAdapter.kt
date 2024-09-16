@@ -11,7 +11,10 @@ import com.kittunes.Api_Data.Data
 import com.kittunes.R
 import com.kittunes.databinding.SearchCardBinding
 
-class SearchAdapter(private val onSongClicked: (Data) -> Unit) : ListAdapter<Data, SearchAdapter.SearchResultViewHolder>(SongDiffCallback()) {
+class SearchAdapter(
+    private val onSongClicked: (Data) -> Unit,
+    private val onAddToQueue: (Data) -> Unit // Add a callback for adding to queue
+) : ListAdapter<Data, SearchAdapter.SearchResultViewHolder>(SongDiffCallback()) {
 
     inner class SearchResultViewHolder(private val binding: SearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
@@ -35,7 +38,7 @@ class SearchAdapter(private val onSongClicked: (Data) -> Unit) : ListAdapter<Dat
                 popupMenu.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
                         R.id.add_queue -> {
-                            // Handle Add to Queue action
+                            onAddToQueue(song) // Notify the callback to add song to queue
                             true
                         }
                         R.id.search_add_to_playlist -> {
