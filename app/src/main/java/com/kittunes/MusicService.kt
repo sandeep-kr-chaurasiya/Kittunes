@@ -35,9 +35,7 @@ class MusicService : Service() {
                 try {
                     setDataSource(song.preview) // Ensure this is a valid URL or file path
                     setOnPreparedListener {
-                        // Seek to the last known position if available
                         seekTo(currentPosition)
-                        // Start playback automatically if requested
                         if (isPlaying) startPlayback()
                     }
                     setOnCompletionListener {
@@ -50,7 +48,6 @@ class MusicService : Service() {
                 }
             }
         } else {
-            // If the same song is selected, just seek to the last position
             mediaPlayer?.seekTo(currentPosition)
         }
     }
@@ -83,7 +80,7 @@ class MusicService : Service() {
     }
 
     private fun onSongComplete() {
-        // Handle what happens when the song is complete (e.g., play next song)
+
     }
 
     override fun onDestroy() {
