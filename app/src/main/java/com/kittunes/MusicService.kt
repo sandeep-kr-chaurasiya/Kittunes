@@ -1,6 +1,5 @@
 package com.kittunes
 
-import SharedViewModel
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
@@ -33,7 +32,7 @@ class MusicService : Service() {
             currentSong = song
             mediaPlayer = MediaPlayer().apply {
                 try {
-                    setDataSource(song.preview) // Ensure this is a valid URL or file path
+                    setDataSource(song.preview)
                     setOnPreparedListener {
                         seekTo(currentPosition)
                         if (isPlaying) startPlayback()
