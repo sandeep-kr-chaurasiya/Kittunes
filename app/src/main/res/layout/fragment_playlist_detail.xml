@@ -33,6 +33,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+        android:id="@+id/playlist_menu_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginTop="24dp"
+        android:background="@color/transparent"
+        android:src="@drawable/three_dot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.917"
+        app:layout_constraintStart_toEndOf="@+id/playlistName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <ImageButton
         android:id="@+id/btn_play_pause"
         android:layout_width="74dp"
         android:layout_height="74dp"

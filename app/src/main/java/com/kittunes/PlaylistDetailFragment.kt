@@ -8,21 +8,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kittunes.Api_Data.Playlist
-import com.kittunes.databinding.FragmentPlaylistBinding
+import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.fragments.PlaylistAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class PlaylistFragment : Fragment() {
+class PlaylistDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentPlaylistBinding
+    private lateinit var binding: FragmentPlaylistDetailBinding
     private var playlist: Playlist? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        binding = FragmentPlaylistDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -75,7 +75,7 @@ class PlaylistFragment : Fragment() {
     private fun updateUIWithPlaylists(playlists: List<Playlist>) {
         val adapter = PlaylistAdapter(playlists) { playlist ->
             Log.d("PlaylistFragment", "Clicked playlist: ${playlist.playlistName}")
-            val detailFragment = PlaylistFragment().apply {
+            val detailFragment = PlaylistDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable("playlist", playlist) // Pass the playlist data
                 }

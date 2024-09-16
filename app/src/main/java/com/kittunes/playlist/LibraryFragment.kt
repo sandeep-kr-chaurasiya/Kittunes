@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.Api_Data.Playlist
-import com.kittunes.PlaylistFragment
+import com.kittunes.PlaylistDetailFragment
 import com.kittunes.R
 import com.kittunes.databinding.FragmentLibraryBinding
 
@@ -114,7 +114,7 @@ class LibraryFragment : Fragment() {
         binding.playlistRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.playlistRecyclerView.adapter = PlaylistAdapter(playlists) { playlist ->
             Log.d("LibraryFragment", "Clicked playlist: ${playlist.playlistName}")
-            val fragment = PlaylistFragment().apply {
+            val fragment = PlaylistDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable("playlist", playlist) // Pass the playlist data
                 }
