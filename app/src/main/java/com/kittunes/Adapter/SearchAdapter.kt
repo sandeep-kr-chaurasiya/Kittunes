@@ -2,6 +2,7 @@ package com.kittunes.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,26 @@ class SearchAdapter(private val onSongClicked: (Data) -> Unit) : ListAdapter<Dat
             // Set the click listener for the song
             binding.searchcard.setOnClickListener {
                 onSongClicked(song)  // Notify the callback with the clicked song
+            }
+
+            binding.menuButton.setOnClickListener { view ->
+                val popupMenu = PopupMenu(binding.root.context, view)
+                popupMenu.menuInflater.inflate(R.menu.search_menu, popupMenu.menu)
+
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.add_queue -> {
+                            // Handle Add to Queue action
+                            true
+                        }
+                        R.id.search_add_to_playlist -> {
+                            // Handle Add to Playlist action
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popupMenu.show()
             }
         }
     }
