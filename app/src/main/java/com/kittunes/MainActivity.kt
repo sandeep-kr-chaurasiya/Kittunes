@@ -63,21 +63,29 @@ class MainActivity : AppCompatActivity() {
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         // Restore playback state
         restorePlaybackState()
-        // Observe current song changes
+
         sharedViewModel.currentSong.observe(this) { currentSong ->
             currentSong?.let { updateSongData(it) }
         }
 
-        // Observe playing state changes to update the play/pause button
         sharedViewModel.isPlaying.observe(this) { isPlaying ->
             updatePlayPauseButton(isPlaying)
         }
 
         binding.currentsong.setOnClickListener {
-            sharedViewModel.currentSong.value?.let { song ->
-                val bottomSheetFragment = SongDetailBottomFragment.newInstance(song, autoPlay = false)
+            val currentSong = sharedViewModel.currentSong.value
+            val isPlaying = sharedViewModel.isPlaying.value ?: false
+
+            if (currentSong != null) {
+                // Open the bottom sheet fragment without restarting the music
+                val bottomSheetFragment = SongDetailBottomFragment.newInstance(currentSong, autoPlay = false)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-            } ?: Log.d(TAG, "No current song to display")
+
+                // Ensure UI reflects the current playback state
+                updatePlayPauseButton(isPlaying)
+            } else {
+                Log.d(TAG, "No current song to display")
+            }
         }
     }
 

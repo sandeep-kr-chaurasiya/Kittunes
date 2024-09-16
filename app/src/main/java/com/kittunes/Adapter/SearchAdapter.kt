@@ -3,6 +3,7 @@ package com.kittunes.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,7 @@ import com.kittunes.databinding.SearchCardBinding
 
 class SearchAdapter(
     private val onSongClicked: (Data) -> Unit,
-    private val onAddToQueue: (Data) -> Unit // Add a callback for adding to queue
+    private val onAddToQueue: (Data) -> Unit
 ) : ListAdapter<Data, SearchAdapter.SearchResultViewHolder>(SongDiffCallback()) {
 
     inner class SearchResultViewHolder(private val binding: SearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -26,7 +27,6 @@ class SearchAdapter(
                 .error(R.drawable.dummyimage)
                 .into(binding.songThumbnail)
 
-            // Set the click listener for the song
             binding.searchcard.setOnClickListener {
                 onSongClicked(song)  // Notify the callback with the clicked song
             }
@@ -38,11 +38,13 @@ class SearchAdapter(
                 popupMenu.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
                         R.id.add_queue -> {
-                            onAddToQueue(song) // Notify the callback to add song to queue
+                            onAddToQueue(song)
+                            Toast.makeText(binding.root.context, "Added to queue", Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.search_add_to_playlist -> {
                             // Handle Add to Playlist action
+                            Toast.makeText(binding.root.context, "Added to playlist", Toast.LENGTH_SHORT).show()
                             true
                         }
                         else -> false

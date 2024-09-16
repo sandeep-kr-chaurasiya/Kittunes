@@ -147,6 +147,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             .load(song.album.cover_medium)
             .into(binding.cover)
 
+        // Update the SeekBar based on the current song
         musicService?.mediaPlayer?.let { mediaPlayer ->
             binding.seekBar.max = mediaPlayer.duration
             binding.seekBar.progress = mediaPlayer.currentPosition
@@ -158,10 +159,13 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private fun prepareAndPlaySong() {
         if (isBound) {
             sharedViewModel.currentSong.value?.let { song ->
-                musicService?.prepareSong(song)
+                if (musicService?.currentSong != song) {
+                    musicService?.prepareSong(song)
+                }
                 musicService?.mediaPlayer?.setOnPreparedListener {
-                    musicService?.startPlayback()
-                    sharedViewModel.setPlayingState(true)
+                    if (sharedViewModel.isPlaying.value == true) {
+                        musicService?.startPlayback()
+                    }
                 }
             }
         }
@@ -172,12 +176,9 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             val musicBinder = binder as? MusicService.MusicBinder
             musicService = musicBinder?.getService()
             isBound = true
-
             sharedViewModel.currentSong.value?.let { song ->
                 updateSongUI(song)
-                prepareAndPlaySong()
             }
-
             updatePlayPauseButton(sharedViewModel.isPlaying.value ?: false)
         }
 

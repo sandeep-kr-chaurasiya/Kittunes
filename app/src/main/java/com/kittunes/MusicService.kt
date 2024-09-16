@@ -27,6 +27,7 @@ class MusicService : Service() {
     }
 
     fun prepareSong(song: Data) {
+        // Ensure that this method does not restart playback
         if (currentSong != song) {
             releaseMediaPlayer()
             currentSong = song
@@ -34,11 +35,13 @@ class MusicService : Service() {
                 try {
                     setDataSource(song.preview)
                     setOnPreparedListener {
-                        seekTo(currentPosition)
-                        if (isPlaying) startPlayback()
+                        if (isPlaying) {
+                            start()
+                        }
                     }
                     setOnCompletionListener {
-                        onSongComplete()
+                        currentSong = null
+                        this@MusicService.currentPosition = 0
                     }
                     prepareAsync()
                 } catch (e: Exception) {
@@ -46,8 +49,6 @@ class MusicService : Service() {
                     stopPlayback()
                 }
             }
-        } else {
-            mediaPlayer?.seekTo(currentPosition)
         }
     }
 
