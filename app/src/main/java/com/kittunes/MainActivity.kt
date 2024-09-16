@@ -82,16 +82,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restorePlaybackState() {
-        val savedSong = sharedViewModel.currentSong.value
+        val currentSong = sharedViewModel.currentSong.value
         val isPlaying = sharedViewModel.isPlaying.value ?: false
 
-        if (savedSong != null) {
-            updateSongData(savedSong)
+        // Update UI based on current song
+        if (currentSong != null) {
+            updateSongData(currentSong)
             binding.currentsong.visibility = View.VISIBLE
-            // Do not auto-play; just update the UI
-            if (isBound && isPlaying) {
-                musicService?.pausePlayback()
-                sharedViewModel.setPlayingState(false)
+        } else {
+            binding.currentsong.visibility = View.GONE
+        }
+        updatePlayPauseButton(isPlaying)
+
+        if (isBound) {
+            // Stop playback to ensure music doesn't play automatically
+            musicService?.stopPlayback()
+            sharedViewModel.setPlayingState(false) // Update the ViewModel to reflect the stopped state
+
+            // Prepare the song if it exists, but do not start playback
+            currentSong?.let { song ->
+                musicService?.prepareSong(song)
             }
         }
     }
@@ -102,7 +112,6 @@ class MainActivity : AppCompatActivity() {
             musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
-            // Restore playback state
             restorePlaybackState()
         }
 
@@ -182,20 +191,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSongData(song: Data) {
         Log.d(TAG, "Updating song data: ${song.title}")
-        binding.songTitle.text = song.title
-        binding.artistName.text = song.artist.name
+        binding.title.text = song.title
+        binding.artist.text = song.artist.name
         Glide.with(this)
             .load(song.album.cover_medium)
-            .into(binding.songImage)
+            .into(binding.cover)
 
         // Check if song is different from the one currently playing in MusicService
         if (musicService?.currentSong != song) {
-            musicService?.playSong(song)
+            musicService?.prepareSong(song)
         }
     }
 
     private fun updatePlayPauseButton(isPlaying: Boolean) {
-        val playPauseButton = binding.playButton
+        val playPauseButton = binding.btnPlayPause
         playPauseButton.setImageResource(
             if (isPlaying) R.drawable.pause else R.drawable.play1
         )
