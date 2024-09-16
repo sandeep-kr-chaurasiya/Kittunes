@@ -65,7 +65,7 @@
         <LinearLayout
             android:layout_marginHorizontal="3dp"
             android:id="@+id/currentsong"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@drawable/curveborder"
@@ -82,7 +82,7 @@
 
             <!-- Image for song thumbnail -->
             <ImageView
-                android:id="@+id/song_image"
+                android:id="@+id/cover"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
@@ -101,7 +101,7 @@
 
                 <TextView
                     android:maxLines="1"
-                    android:id="@+id/song_title"
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
@@ -110,7 +110,7 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/artist_name"
+                    android:id="@+id/artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
@@ -121,7 +121,7 @@
 
             <!-- Play Button -->
             <ImageButton
-                android:id="@+id/play_button"
+                android:id="@+id/btn_play_pause"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"

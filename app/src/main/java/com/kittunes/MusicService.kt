@@ -1,5 +1,6 @@
 package com.kittunes
 
+import SharedViewModel
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
@@ -13,6 +14,7 @@ class MusicService : Service() {
     var mediaPlayer: MediaPlayer? = null
     var currentSong: Data? = null
     private var currentPosition: Int = 0
+    private var sharedViewModel: SharedViewModel? = null
 
     val isPlaying: Boolean
         get() = mediaPlayer?.isPlaying ?: false
@@ -44,8 +46,7 @@ class MusicService : Service() {
                         this@MusicService.currentPosition = 0
                     }
                     setOnCompletionListener {
-                        currentSong = null
-                        this@MusicService.currentPosition = 0
+                        onSongComplete()
                     }
                     prepareAsync()
                 } catch (e: Exception) {
@@ -54,6 +55,10 @@ class MusicService : Service() {
                 }
             }
         }
+    }
+
+    private fun onSongComplete() {
+        sharedViewModel?.playNextSong()
     }
 
     fun pausePlayback() {
