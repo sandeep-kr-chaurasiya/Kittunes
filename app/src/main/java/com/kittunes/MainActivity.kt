@@ -102,14 +102,13 @@ class MainActivity : AppCompatActivity() {
         }
         updatePlayPauseButton(isPlaying)
 
-        if (isBound) {
-            // Stop playback to ensure music doesn't play automatically
-            musicService?.stopPlayback()
-            sharedViewModel.setPlayingState(false) // Update the ViewModel to reflect the stopped state
-
-            // Prepare the song if it exists, but do not start playback
-            currentSong?.let { song ->
-                musicService?.prepareSong(song)
+        // Prepare the song without starting playback
+        if (isBound && currentSong != null) {
+            musicService?.prepareSong(currentSong)
+            if (isPlaying) {
+                musicService?.resumePlayback()
+            } else {
+                musicService?.pausePlayback()
             }
         }
     }

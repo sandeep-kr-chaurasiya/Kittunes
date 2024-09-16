@@ -65,7 +65,7 @@ class SearchFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = SearchAdapter(
             onSongClicked = { song -> onSongClicked(song) },
-            onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) } // Pass the add to queue callback
+            onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) }
         )
         binding.recyclerView.adapter = adapter
     }
@@ -144,8 +144,13 @@ class SearchFragment : Fragment() {
             musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
+
             sharedViewModel.currentSong.value?.let { song ->
-                onSongClicked(song)
+                // Ensure song is prepared and started if it's already set in the ViewModel
+                musicService?.prepareSong(song)
+                musicService?.mediaPlayer?.setOnPreparedListener {
+                    musicService?.startPlayback()
+                }
             }
         }
 

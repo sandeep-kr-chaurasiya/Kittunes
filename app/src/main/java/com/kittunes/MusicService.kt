@@ -79,10 +79,6 @@ class MusicService : Service() {
         currentPosition = 0
     }
 
-    private fun onSongComplete() {
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         releaseMediaPlayer()
