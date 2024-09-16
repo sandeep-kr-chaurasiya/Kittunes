@@ -14,12 +14,10 @@ class MusicService : Service() {
     var mediaPlayer: MediaPlayer? = null
     var currentSong: Data? = null
     private var currentPosition: Int = 0
-    private var sharedViewModel: SharedViewModel? = null
+    private val binder = MusicBinder()
 
     val isPlaying: Boolean
         get() = mediaPlayer?.isPlaying ?: false
-
-    private val binder = MusicBinder()
 
     inner class MusicBinder : Binder() {
         fun getService(): MusicService = this@MusicService
@@ -29,21 +27,17 @@ class MusicService : Service() {
         return binder
     }
 
-    fun playSong(song: Data) {
-        if (currentSong == song && mediaPlayer != null) {
-            mediaPlayer?.apply {
-                seekTo(currentPosition)
-                start()
-            }
-        } else {
+    fun prepareSong(song: Data) {
+        if (currentSong != song) {
             releaseMediaPlayer()
             currentSong = song
             mediaPlayer = MediaPlayer().apply {
                 try {
                     setDataSource(song.preview)
                     setOnPreparedListener {
-                        start()
+                        // Set the initial position to 0
                         this@MusicService.currentPosition = 0
+                        // Prepare the song without starting playback
                     }
                     setOnCompletionListener {
                         onSongComplete()
@@ -54,11 +48,17 @@ class MusicService : Service() {
                     stopPlayback()
                 }
             }
+        } else {
+            // If the same song is selected, just seek to the last position
+            mediaPlayer?.seekTo(currentPosition)
         }
     }
 
-    private fun onSongComplete() {
-        sharedViewModel?.playNextSong()
+    fun startPlayback() {
+        mediaPlayer?.takeIf { !it.isPlaying }?.apply {
+            seekTo(currentPosition)
+            start()
+        }
     }
 
     fun pausePlayback() {
@@ -86,6 +86,10 @@ class MusicService : Service() {
         }
         currentSong = null
         currentPosition = 0
+    }
+
+    private fun onSongComplete() {
+        // Handle what happens when the song is complete
     }
 
     override fun onDestroy() {
