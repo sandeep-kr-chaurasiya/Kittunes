@@ -1,7 +1,7 @@
 package com.kittunes
 
-import SharedViewModel
-import ViewModelFactory
+import com.kittunes.player.SharedViewModel
+import com.kittunes.player.ViewModelFactory
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -22,6 +22,7 @@ import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
 import com.kittunes.databinding.FragmentSearchBinding
+import com.kittunes.player.MusicService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

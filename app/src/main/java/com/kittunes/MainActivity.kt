@@ -1,7 +1,7 @@
 package com.kittunes
 
-import SharedViewModel
-import ViewModelFactory
+import com.kittunes.player.SharedViewModel
+import com.kittunes.player.ViewModelFactory
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -24,6 +24,7 @@ import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
+import com.kittunes.player.MusicService
 
 class MainActivity : AppCompatActivity() {
 

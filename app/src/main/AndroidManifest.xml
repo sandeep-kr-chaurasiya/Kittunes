@@ -44,7 +44,7 @@
             android:exported="false" />
 
         <!-- Declare MusicService -->
-        <service android:name=".MusicService" />
+        <service android:name=".player.MusicService" />
 
         <!-- Metadata for Preloaded Fonts -->
         <meta-data

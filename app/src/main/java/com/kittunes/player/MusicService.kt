@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.player
 
 import android.app.Service
 import android.content.Intent

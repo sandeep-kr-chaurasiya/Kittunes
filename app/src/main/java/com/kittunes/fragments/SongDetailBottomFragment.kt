@@ -1,6 +1,6 @@
 package com.kittunes.fragments
 
-import SharedViewModel
+import com.kittunes.player.SharedViewModel
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kittunes.Api_Data.Data
 import com.kittunes.R
 import com.kittunes.databinding.SongDetailBottomBinding
-import com.kittunes.MusicService
+import com.kittunes.player.MusicService
 
 class SongDetailBottomFragment : BottomSheetDialogFragment() {
 
