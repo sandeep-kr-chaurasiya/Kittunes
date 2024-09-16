@@ -18,6 +18,7 @@ import com.kittunes.Api_Data.Playlist
 import com.kittunes.PlaylistDetailFragment
 import com.kittunes.R
 import com.kittunes.databinding.FragmentLibraryBinding
+import java.util.UUID
 
 class LibraryFragment : Fragment() {
 
@@ -67,13 +68,15 @@ class LibraryFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (userId != null) {
+            val playlistId = UUID.randomUUID().toString() // Generate a unique ID
             val userPlaylistsRef = db.collection("Playlists").document(userId).collection("UserPlaylists")
             val playlist = hashMapOf(
+                "playlistId" to playlistId, // Include unique ID
                 "playlistName" to playlistName,
                 "createdAt" to FieldValue.serverTimestamp()
             )
 
-            userPlaylistsRef.add(playlist)
+            userPlaylistsRef.document(playlistId).set(playlist) // Use the unique ID as the document ID
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "Playlist created successfully", Toast.LENGTH_SHORT).show()
                     fetchPlaylists() // Refresh the playlist after adding

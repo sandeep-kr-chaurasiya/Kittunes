@@ -5,21 +5,21 @@ import android.os.Parcelable
 import com.google.firebase.Timestamp
 
 data class Playlist(
-    val playlistName: String = "",
-    val createdAt: Timestamp? = null,
-    val userId: String = ""
+    val playlistId: String? = null,
+    val playlistName: String? = null,
+    val createdAt: Timestamp? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readParcelable(Timestamp::class.java.classLoader),
-        parcel.readString() ?: ""
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readParcelable(Timestamp::class.java.classLoader)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(playlistId)
         parcel.writeString(playlistName)
         parcel.writeParcelable(createdAt, flags)
-        parcel.writeString(userId)
     }
 
     override fun describeContents(): Int = 0
