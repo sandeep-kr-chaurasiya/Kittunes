@@ -33,11 +33,12 @@ class MusicService : Service() {
             currentSong = song
             mediaPlayer = MediaPlayer().apply {
                 try {
-                    setDataSource(song.preview)
+                    setDataSource(song.preview) // Ensure this is a valid URL or file path
                     setOnPreparedListener {
-                        // Set the initial position to 0
-                        this@MusicService.currentPosition = 0
-                        // Prepare the song without starting playback
+                        // Seek to the last known position if available
+                        seekTo(currentPosition)
+                        // Start playback automatically if requested
+                        if (isPlaying) startPlayback()
                     }
                     setOnCompletionListener {
                         onSongComplete()
@@ -55,24 +56,17 @@ class MusicService : Service() {
     }
 
     fun startPlayback() {
-        mediaPlayer?.takeIf { !it.isPlaying }?.apply {
-            seekTo(currentPosition)
-            start()
-        }
+        mediaPlayer?.takeIf { !it.isPlaying }?.start()
     }
 
     fun pausePlayback() {
-        mediaPlayer?.takeIf { it.isPlaying }?.apply {
-            this@MusicService.currentPosition = currentPosition
-            pause()
-        }
+        mediaPlayer?.takeIf { it.isPlaying }?.pause()
+        // Save the current position when paused
+        currentPosition = mediaPlayer?.currentPosition ?: 0
     }
 
     fun resumePlayback() {
-        mediaPlayer?.takeIf { !it.isPlaying }?.apply {
-            seekTo(currentPosition)
-            start()
-        }
+        mediaPlayer?.takeIf { !it.isPlaying }?.start()
     }
 
     fun stopPlayback() {
@@ -89,7 +83,7 @@ class MusicService : Service() {
     }
 
     private fun onSongComplete() {
-        // Handle what happens when the song is complete
+        // Handle what happens when the song is complete (e.g., play next song)
     }
 
     override fun onDestroy() {

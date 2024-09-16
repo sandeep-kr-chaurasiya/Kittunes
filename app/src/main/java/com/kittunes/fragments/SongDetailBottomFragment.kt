@@ -28,8 +28,6 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private var _binding: SongDetailBottomBinding? = null
     private val binding get() = _binding!!
 
-    private var song: Data? = null
-    private var autoPlay = false
     private var musicService: MusicService? = null
     private var isBound = false
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -37,8 +35,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private val handler = Handler()
     private val updateSeekBarTask = object : Runnable {
         override fun run() {
-            if (isBound && musicService?.mediaPlayer != null) {
-                val mediaPlayer = musicService!!.mediaPlayer!!
+            musicService?.mediaPlayer?.let { mediaPlayer ->
                 binding.seekBar.max = mediaPlayer.duration
                 binding.seekBar.progress = mediaPlayer.currentPosition
                 binding.currentTime.text = formatTime(mediaPlayer.currentPosition)
@@ -64,9 +61,16 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            song = it.getParcelable(ARG_SONG)
-            autoPlay = it.getBoolean(ARG_AUTO_PLAY)
+        observeViewModelData()
+    }
+
+    private fun observeViewModelData() {
+        sharedViewModel.currentSong.observe(this) { song ->
+            song?.let { updateSongUI(it) }
+        }
+
+        sharedViewModel.isPlaying.observe(this) { isPlaying ->
+            updatePlayPauseButton(isPlaying)
         }
     }
 
@@ -87,36 +91,32 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             peekHeight = resources.displayMetrics.heightPixels
             skipCollapsed = true
         }
-        binding.down.setOnClickListener { dismiss() }
-
-        // Initialize song UI and functionality
-        song?.let { songData ->
-            binding.title.text = songData.title
-            binding.artist.text = songData.artist.name
-            Glide.with(requireContext())
-                .load(songData.album.cover_medium)
-                .into(binding.cover)
-
-            setupPlayPauseButton()
-            setupSeekBar()
-        }
-
-        // Auto-play if required and if a new song is passed
-        if (autoPlay && musicService?.currentSong != song) {
-            musicService?.playSong(song!!)
-        }
+        setupClickListeners()
+        setupSeekBar()
     }
 
-    private fun setupPlayPauseButton() {
-        binding.btnPlayPause.setOnClickListener {
-            if (musicService?.isPlaying == true) {
-                musicService?.pausePlayback()
+    private fun setupClickListeners() {
+        binding.down.setOnClickListener { dismiss() }
+        binding.btnNext.setOnClickListener {
+            sharedViewModel.playNextSong()
+            prepareAndPlaySong()
+        }
+        binding.btnPrevious.setOnClickListener {
+            sharedViewModel.playPreviousSong()
+            prepareAndPlaySong()
+        }
+        binding.btnPlayPause.setOnClickListener { togglePlayPause() }
+    }
+
+    private fun togglePlayPause() {
+        musicService?.let {
+            if (it.isPlaying) {
+                it.pausePlayback()
                 sharedViewModel.setPlayingState(false)
             } else {
-                musicService?.resumePlayback()
+                it.resumePlayback()
                 sharedViewModel.setPlayingState(true)
             }
-            updatePlayPauseButton()
         }
     }
 
@@ -124,7 +124,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
     private fun setupSeekBar() {
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser && musicService?.mediaPlayer != null) {
+                if (fromUser && isBound) {
                     musicService?.mediaPlayer?.seekTo(progress)
                 }
             }
@@ -132,16 +132,39 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-
-        // Start the seek bar update task
-        handler.post(updateSeekBarTask)
     }
 
-    private fun updatePlayPauseButton() {
-        val isPlaying = musicService?.isPlaying ?: false
+    private fun updatePlayPauseButton(isPlaying: Boolean) {
         binding.btnPlayPause.setImageResource(
             if (isPlaying) R.drawable.pause else R.drawable.play
         )
+    }
+
+    private fun updateSongUI(song: Data) {
+        binding.title.text = song.title ?: "Unknown Title"
+        binding.artist.text = song.artist.name ?: "Unknown Artist"
+        Glide.with(requireContext())
+            .load(song.album.cover_medium)
+            .into(binding.cover)
+
+        musicService?.mediaPlayer?.let { mediaPlayer ->
+            binding.seekBar.max = mediaPlayer.duration
+            binding.seekBar.progress = mediaPlayer.currentPosition
+        }
+
+        handler.post(updateSeekBarTask)
+    }
+
+    private fun prepareAndPlaySong() {
+        if (isBound) {
+            sharedViewModel.currentSong.value?.let { song ->
+                musicService?.prepareSong(song)
+                musicService?.mediaPlayer?.setOnPreparedListener {
+                    musicService?.startPlayback()
+                    sharedViewModel.setPlayingState(true)
+                }
+            }
+        }
     }
 
     private val serviceConnection = object : ServiceConnection {
@@ -150,21 +173,17 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             musicService = musicBinder?.getService()
             isBound = true
 
-            updatePlayPauseButton()
-
-            // Initialize SeekBar to match current position when the service connects
-            musicService?.mediaPlayer?.let { mediaPlayer ->
-                binding.seekBar.max = mediaPlayer.duration
-                binding.seekBar.progress = mediaPlayer.currentPosition
+            sharedViewModel.currentSong.value?.let { song ->
+                updateSongUI(song)
+                prepareAndPlaySong()
             }
 
-            // Start seek bar updates when service is connected
-            handler.post(updateSeekBarTask)
+            updatePlayPauseButton(sharedViewModel.isPlaying.value ?: false)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
-            handler.removeCallbacks(updateSeekBarTask)  // Stop updates when service is disconnected
+            handler.removeCallbacks(updateSeekBarTask)
         }
     }
 
@@ -180,7 +199,7 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             requireContext().unbindService(serviceConnection)
             isBound = false
         }
-        handler.removeCallbacks(updateSeekBarTask)  // Stop seek bar updates
+        handler.removeCallbacks(updateSeekBarTask)
     }
 
     override fun onDestroyView() {

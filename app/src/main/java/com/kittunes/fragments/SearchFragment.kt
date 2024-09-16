@@ -117,15 +117,25 @@ class SearchFragment : Fragment() {
     }
 
     private fun onSongClicked(song: Data) {
+        // Update the ViewModel
         sharedViewModel.addSongToQueue(song)
         sharedViewModel.setCurrentSong(song)
         sharedViewModel.setPlayingState(true) // Set playing state to true
 
         if (isBound) {
-            musicService?.playSong(song)
+            // Prepare the song and start playback
+            musicService?.prepareSong(song)
+            // Add a listener to start playback once the song is prepared
+            musicService?.mediaPlayer?.setOnPreparedListener {
+                musicService?.startPlayback()
+            }
         } else {
-            Log.w(TAG, "MusicService is not bound. Unable to play song.")
+            // Bind to the service if not already bound
+            val serviceIntent = Intent(requireContext(), MusicService::class.java)
+            requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
+
+        // Update UI
         (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
     }
 
@@ -140,6 +150,9 @@ class SearchFragment : Fragment() {
             musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
+            sharedViewModel.currentSong.value?.let { song ->
+                onSongClicked(song)
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

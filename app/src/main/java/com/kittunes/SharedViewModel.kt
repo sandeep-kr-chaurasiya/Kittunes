@@ -9,7 +9,10 @@ import com.kittunes.Api_Data.Data
 class SharedViewModel(context: Context) : ViewModel() {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-    private val gson = Gson() // For JSON serialization/deserialization
+    private val gson = Gson()
+
+    private val _songList = MutableLiveData<MutableList<Data>>(mutableListOf())
+    val songList: LiveData<MutableList<Data>> get() = _songList
 
     private val _currentSong = MutableLiveData<Data?>().apply {
         value = getStoredSong()
@@ -26,9 +29,23 @@ class SharedViewModel(context: Context) : ViewModel() {
     }
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
+    init {
+        // Ensure song queue is persisted even if it was loaded from prefs
+        saveQueueToPreferences(_songList.value ?: listOf())
+    }
+
     fun setCurrentSong(song: Data?) {
         _currentSong.value = song
         saveSongToPreferences(song)
+    }
+
+    fun addSongToQueue(song: Data) {
+        val list = _songList.value ?: mutableListOf()
+        if (!list.contains(song)) {
+            list.add(song)
+            _songList.value = list
+            saveQueueToPreferences(list)
+        }
     }
 
     fun setCurrentPosition(position: Int) {
@@ -39,6 +56,24 @@ class SharedViewModel(context: Context) : ViewModel() {
     fun setPlayingState(isPlaying: Boolean) {
         _isPlaying.value = isPlaying
         prefs.edit().putBoolean("isPlaying", isPlaying).apply()
+    }
+
+    fun playNextSong() {
+        val list = _songList.value ?: return
+        val currentIndex = list.indexOf(_currentSong.value)
+        if (currentIndex != -1 && currentIndex < list.size - 1) {
+            val nextSong = list[currentIndex + 1]
+            setCurrentSong(nextSong)
+        }
+    }
+
+    fun playPreviousSong() {
+        val list = _songList.value ?: return
+        val currentIndex = list.indexOf(_currentSong.value)
+        if (currentIndex > 0) {
+            val previousSong = list[currentIndex - 1]
+            setCurrentSong(previousSong)
+        }
     }
 
     private fun saveSongToPreferences(song: Data?) {
@@ -57,7 +92,24 @@ class SharedViewModel(context: Context) : ViewModel() {
         return try {
             gson.fromJson(songJson, Data::class.java)
         } catch (e: Exception) {
-            e.printStackTrace()  // Log or handle the error
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun saveQueueToPreferences(queue: List<Data>) {
+        val editor = prefs.edit()
+        val queueJson = gson.toJson(queue)
+        editor.putString("songQueue", queueJson)
+        editor.apply()
+    }
+
+    private fun getStoredQueue(): List<Data>? {
+        val queueJson = prefs.getString("songQueue", null) ?: return null
+        return try {
+            gson.fromJson(queueJson, Array<Data>::class.java)?.toList()
+        } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }
