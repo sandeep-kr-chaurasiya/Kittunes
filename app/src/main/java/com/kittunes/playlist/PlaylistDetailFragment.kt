@@ -8,18 +8,20 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.Playlist
 import com.kittunes.databinding.FragmentPlaylistDetailBinding
-import com.kittunes.fragments.PlaylistAdapter
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.kittunes.player.SharedViewModel
 import com.kittunes.R
 
 class PlaylistDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaylistDetailBinding
     private var playlist: Playlist? = null
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,13 +34,19 @@ class PlaylistDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Check if a playlist was passed as an argument
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
         arguments?.getParcelable<Playlist>("playlist")?.let {
             playlist = it
             displayPlaylistDetails(it)
         } ?: fetchPlaylists()
 
-        setupMenu() // Set up the menu for playlist options
+        setupMenu()
+
+        // Observe playlistSongs LiveData
+        sharedViewModel.playlistSongs.observe(viewLifecycleOwner) { songs ->
+            updateUIWithSongs(songs)
+        }
     }
 
     private fun displayPlaylistDetails(playlist: Playlist) {
@@ -48,52 +56,24 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun fetchSongsForPlaylist(playlist: Playlist) {
-        // Placeholder for implementation to fetch and display songs for the given playlist
-        Log.d("PlaylistDetailFragment", "Fetching songs for playlist: ${playlist.playlistName}")
-        // Add your Firebase fetching logic here
+        playlist.playlistId?.let {
+            sharedViewModel.fetchSongsFromPlaylist(it)
+        } ?: Log.e("PlaylistDetailFragment", "Playlist ID is null")
     }
 
-    private fun fetchPlaylists() {
-        val db = FirebaseFirestore.getInstance()
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-        if (userId != null) {
-            val userPlaylistsRef = db.collection("Playlists").document(userId).collection("UserPlaylists")
-
-            userPlaylistsRef.get()
-                .addOnSuccessListener { result ->
-                    val playlists = mutableListOf<Playlist>()
-                    for (document in result) {
-                        val playlist = document.toObject(Playlist::class.java)
-                        playlists.add(playlist)
-                    }
-                    updateUIWithPlaylists(playlists)
-                }
-                .addOnFailureListener { e ->
-                    Log.e("PlaylistDetailFragment", "Error fetching playlists: ${e.message}")
-                    Toast.makeText(requireContext(), "Error fetching playlists", Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            Log.e("PlaylistDetailFragment", "Error: User not logged in")
-            Toast.makeText(requireContext(), "Error: User not logged in", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateUIWithPlaylists(playlists: List<Playlist>) {
-        val adapter = PlaylistAdapter(playlists) { playlist ->
-            Log.d("PlaylistDetailFragment", "Clicked playlist: ${playlist.playlistName}")
-            val detailFragment = PlaylistDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable("playlist", playlist) // Pass the playlist data
-                }
-            }
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_container, detailFragment)
-                .addToBackStack(null)
-                .commit()
+    private fun updateUIWithSongs(songs: List<Data>) {
+        // Log the songs list to check its content
+        Log.d("PlaylistDetailFragment", "Updating UI with songs: $songs")
+        val adapter = SongAdapter(songs) { song ->
+            Log.d("PlaylistDetailFragment", "Clicked song: ${song.title}")
+            // Handle song click event
         }
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter
+    }
+
+    private fun fetchPlaylists() {
+        sharedViewModel.fetchPlaylists()
     }
 
     private fun setupMenu() {
@@ -115,32 +95,21 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun deletePlaylist(playlist: Playlist) {
-        val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-        if (userId != null) {
-            val playlistId = playlist.playlistId // Get the unique ID from the playlist object
-            Log.d("PlaylistDetailFragment", "Attempting to delete playlist with ID: $playlistId")
-
-            if (playlistId != null) {
-                val playlistRef = db.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
-
-                playlistRef.delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "Playlist deleted successfully", Toast.LENGTH_SHORT).show()
-                        requireActivity().supportFragmentManager.popBackStack() // Go back to the previous fragment
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("PlaylistDetailFragment", "Error deleting playlist: ${e.message}")
-                        Toast.makeText(requireContext(), "Error deleting playlist", Toast.LENGTH_SHORT).show()
-                    }
-            } else {
-                Log.e("PlaylistDetailFragment", "Error: Playlist ID is null")
-                Toast.makeText(requireContext(), "Error: Playlist ID is null", Toast.LENGTH_SHORT).show()
-            }
-        } else {
+        if (userId == null) {
             Log.e("PlaylistDetailFragment", "Error: User not logged in")
-            Toast.makeText(requireContext(), "Error: User not logged in", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        sharedViewModel.firestore.collection("Playlists").document(userId).collection("UserPlaylists")
+            .document(playlist.playlistId!!)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Playlist deleted", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.popBackStack()
+            }
+            .addOnFailureListener { e ->
+                Log.e("PlaylistDetailFragment", "Error deleting playlist", e)
+            }
     }
 }

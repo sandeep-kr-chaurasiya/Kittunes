@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
 import com.google.gson.Gson
@@ -17,7 +18,7 @@ class SharedViewModel(context: Context) : ViewModel() {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     private val gson = Gson()
-    private val firestore = FirebaseFirestore.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
 
     private val _songList = MutableLiveData<MutableList<Data>>(mutableListOf())
@@ -40,6 +41,9 @@ class SharedViewModel(context: Context) : ViewModel() {
 
     private val _playlists = MutableLiveData<List<Playlist>>()
     val playlists: LiveData<List<Playlist>> get() = _playlists
+
+    private val _playlistSongs = MutableLiveData<List<Data>>()
+    val playlistSongs: LiveData<List<Data>> get() = _playlistSongs
 
     init {
         loadQueueFromPreferences()
@@ -147,6 +151,64 @@ class SharedViewModel(context: Context) : ViewModel() {
                 }
         } else {
             Log.e(TAG, "Error: User not logged in")
+        }
+    }
+
+    fun fetchSongsFromPlaylist(playlistId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Log.e(TAG, "Error: User not logged in")
+            return
+        }
+
+        val playlistRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
+        playlistRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val songs = document.get("songs") as? List<Map<String, Any>> ?: emptyList()
+                Log.d(TAG, "Fetched songs: $songs")  // Log the raw data
+
+                if (songs.isNotEmpty()) {
+                    // Convert Map to Data object
+                    val songDataList = songs.mapNotNull { map ->
+                        try {
+                            // Convert Map to Data object
+                            val jsonString = Gson().toJson(map)
+                            Gson().fromJson(jsonString, Data::class.java)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error converting map to Data", e)
+                            null
+                        }
+                    }
+                    // Post the songs data to LiveData
+                    _playlistSongs.postValue(songDataList)
+                } else {
+                    Log.e(TAG, "No songs found in the playlist")
+                    _playlistSongs.postValue(emptyList())  // Ensure empty list is posted
+                }
+            } else {
+                Log.e(TAG, "Playlist does not exist with ID: $playlistId")
+            }
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Error fetching songs from playlist", e)
+        }
+    }
+
+    fun fetchSongsDetails(songIds: List<String>) {
+        if (songIds.isNotEmpty()) {
+            firestore.collection("Songs")
+                .whereIn(FieldPath.documentId(), songIds)
+                .get()
+                .addOnSuccessListener { result ->
+                    val songs = result.mapNotNull { document ->
+                        document.toObject(Data::class.java)
+                    }
+                    _playlistSongs.postValue(songs)
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error fetching song details", e)
+                }
+        } else {
+            Log.e(TAG, "Empty list of song IDs provided")
         }
     }
 
