@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.playlist
 
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +14,7 @@ import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.fragments.PlaylistAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kittunes.R
 
 class PlaylistDetailFragment : Fragment() {
 

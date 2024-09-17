@@ -44,6 +44,7 @@ class SearchAdapter(
                         }
                         R.id.search_add_to_playlist -> {
                             // Handle Add to Playlist action
+
                             Toast.makeText(binding.root.context, "Added to playlist", Toast.LENGTH_SHORT).show()
                             true
                         }
