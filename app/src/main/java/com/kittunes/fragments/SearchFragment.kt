@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +26,6 @@ import com.kittunes.fragments.PlaylistAdapter
 import com.kittunes.player.MusicService
 import com.kittunes.player.SharedViewModel
 import com.kittunes.player.ViewModelFactory
-import com.kittunes.playlist.AddToPlaylistDialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
