@@ -142,9 +142,7 @@ class SearchFragment : Fragment() {
 
     private fun showAddToPlaylistDialog(song: Data) {
         sharedViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
-            // Ensure the playlist list is not empty
             if (playlists.isNotEmpty()) {
-                // Create and show the dialog
                 val dialogView = layoutInflater.inflate(R.layout.dailouge_add_to_playlist, null)
                 val dialog = AlertDialog.Builder(requireContext())
                     .setTitle("Select Playlist")
@@ -154,9 +152,14 @@ class SearchFragment : Fragment() {
                 val recyclerView = dialogView.findViewById<RecyclerView>(R.id.dailougeRecyclerview)
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 recyclerView.adapter = PlaylistAdapter(playlists) { selectedPlaylist ->
-                    sharedViewModel.addSongToPlaylist(selectedPlaylist, song)
-                    Toast.makeText(requireContext(), "Added to playlist", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss() // Close the dialog after selection
+                    val playlistId = selectedPlaylist.playlistId // Use playlistId here
+                    if (playlistId != null) {
+                        sharedViewModel.addSongToPlaylist(playlistId, song)
+                        Toast.makeText(requireContext(), "Added to playlist", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Error: Playlist ID is missing", Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss()
                 }
 
                 dialog.show()

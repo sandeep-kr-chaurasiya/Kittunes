@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -86,13 +87,19 @@ class SharedViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun addSongToPlaylist(playlist: Playlist, song: Data) {
-        val playlistId = playlist.playlistId ?: return
-        val playlistRef = firestore.collection("Playlists").document(playlistId)
+    fun addSongToPlaylist(playlistId: String, song: Data) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Log.e(TAG, "Error: User not logged in")
+            return
+        }
+
+        // Reference to the user's specific playlist
+        val playlistRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
 
         playlistRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
-                // Document exists, update it
+                // Add song to the existing playlist
                 playlistRef.update("songs", FieldValue.arrayUnion(song))
                     .addOnSuccessListener {
                         Log.d(TAG, "Song added to playlist successfully")
@@ -101,14 +108,7 @@ class SharedViewModel(context: Context) : ViewModel() {
                         Log.e(TAG, "Failed to add song to playlist", e)
                     }
             } else {
-                // Document does not exist, create it
-                playlistRef.set(mapOf("songs" to listOf(song)))
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Playlist created and song added successfully")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "Failed to create playlist and add song", e)
-                    }
+                Log.e(TAG, "Playlist does not exist with ID: $playlistId")
             }
         }.addOnFailureListener { e ->
             Log.e(TAG, "Error fetching playlist document", e)
@@ -136,7 +136,8 @@ class SharedViewModel(context: Context) : ViewModel() {
         // Load the queue from SharedPreferences and update _songList
     }
 
-    private fun fetchPlaylists() {
+    fun fetchPlaylists() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             val userPlaylistsRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists")
 
@@ -145,12 +146,12 @@ class SharedViewModel(context: Context) : ViewModel() {
                     val playlists = mutableListOf<Playlist>()
                     for (document in result) {
                         val playlist = document.toObject(Playlist::class.java)
+                        Log.d(TAG, "Fetched playlist: $playlist")
                         playlists.add(playlist)
                     }
                     _playlists.value = playlists
                 }
                 .addOnFailureListener { e ->
-                    // Handle the error
                     Log.e(TAG, "Error fetching playlists: ${e.message}", e)
                 }
         } else {

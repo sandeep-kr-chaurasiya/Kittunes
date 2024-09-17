@@ -1,6 +1,7 @@
 package com.kittunes.fragments
 
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -63,7 +64,7 @@ class LibraryFragment : Fragment() {
         dialog.show()
     }
 
-    private fun savePlaylistToFirebase(playlistName: String) {
+    fun savePlaylistToFirebase(playlistName: String) {
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -71,21 +72,21 @@ class LibraryFragment : Fragment() {
             val playlistId = UUID.randomUUID().toString() // Generate a unique ID
             val userPlaylistsRef = db.collection("Playlists").document(userId).collection("UserPlaylists")
             val playlist = hashMapOf(
-                "playlistId" to playlistId, // Include unique ID
+                "playlistId" to playlistId,
                 "playlistName" to playlistName,
                 "createdAt" to FieldValue.serverTimestamp()
             )
 
-            userPlaylistsRef.document(playlistId).set(playlist) // Use the unique ID as the document ID
+            userPlaylistsRef.document(playlistId).set(playlist)
                 .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Playlist created successfully", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Playlist created successfully")
                     fetchPlaylists() // Refresh the playlist after adding
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "Error: ${e.message}", e)
                 }
         } else {
-            Toast.makeText(requireContext(), "Error: User not logged in", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "Error: User not logged in")
         }
     }
 
