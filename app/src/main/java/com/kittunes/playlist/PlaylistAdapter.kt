@@ -15,7 +15,11 @@ class PlaylistAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(playlist: Playlist) {
             binding.playlistName.text = playlist.playlistName
-            val timestamp = playlist.createdAt?.toDate()?.toString() ?: "Unknown"
+            // Format the timestamp if needed
+            val timestamp = playlist.createdAt?.toDate()?.let {
+                // Use a date formatter for better readability
+                java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(it)
+            } ?: "Unknown"
             binding.numberOfSongs.text = timestamp
 
             binding.playlistcard.setOnClickListener {
@@ -30,9 +34,7 @@ class PlaylistAdapter(
         return PlaylistViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return playlists.size
-    }
+    override fun getItemCount(): Int = playlists.size
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val playlist = playlists[position]

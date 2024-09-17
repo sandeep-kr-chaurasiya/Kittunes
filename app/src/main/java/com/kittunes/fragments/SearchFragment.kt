@@ -1,7 +1,6 @@
 package com.kittunes
 
-import com.kittunes.player.SharedViewModel
-import com.kittunes.player.ViewModelFactory
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -14,15 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kittunes.Adapter.SearchAdapter
 import com.kittunes.Api.ApiInterface
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.MyData
 import com.kittunes.databinding.FragmentSearchBinding
+import com.kittunes.fragments.PlaylistAdapter
 import com.kittunes.player.MusicService
+import com.kittunes.player.SharedViewModel
+import com.kittunes.player.ViewModelFactory
+import com.kittunes.playlist.AddToPlaylistDialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -66,7 +71,8 @@ class SearchFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = SearchAdapter(
             onSongClicked = { song -> onSongClicked(song) },
-            onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) }
+            onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) },
+            onClickAddToPlaylist = { song -> showAddToPlaylistDialog(song) }  // Handle add to playlist
         )
         binding.recyclerView.adapter = adapter
     }
@@ -134,6 +140,32 @@ class SearchFragment : Fragment() {
         (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
     }
 
+    private fun showAddToPlaylistDialog(song: Data) {
+        sharedViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
+            // Ensure the playlist list is not empty
+            if (playlists.isNotEmpty()) {
+                // Create and show the dialog
+                val dialogView = layoutInflater.inflate(R.layout.dailouge_add_to_playlist, null)
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Select Playlist")
+                    .setView(dialogView)
+                    .create()
+
+                val recyclerView = dialogView.findViewById<RecyclerView>(R.id.dailougeRecyclerview)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                recyclerView.adapter = PlaylistAdapter(playlists) { selectedPlaylist ->
+                    sharedViewModel.addSongToPlaylist(selectedPlaylist, song)
+                    Toast.makeText(requireContext(), "Added to playlist", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss() // Close the dialog after selection
+                }
+
+                dialog.show()
+            } else {
+                Toast.makeText(requireContext(), "No playlists available", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun bindMusicService() {
         val serviceIntent = Intent(requireContext(), MusicService::class.java)
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -147,7 +179,6 @@ class SearchFragment : Fragment() {
             Log.d(TAG, "MusicService bound")
 
             sharedViewModel.currentSong.value?.let { song ->
-                // Ensure song is prepared and started if it's already set in the ViewModel
                 musicService?.prepareSong(song)
                 musicService?.mediaPlayer?.setOnPreparedListener {
                     musicService?.startPlayback()
