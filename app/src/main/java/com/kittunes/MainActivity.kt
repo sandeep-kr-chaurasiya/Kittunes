@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
 
         replaceFragment(HomeFragment())
 
-        // Start and bind to MusicService
         val serviceIntent = Intent(this, MusicService::class.java)
         startService(serviceIntent)
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
