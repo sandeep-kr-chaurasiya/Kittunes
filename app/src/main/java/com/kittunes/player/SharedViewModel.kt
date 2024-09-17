@@ -3,8 +3,6 @@ package com.kittunes.player
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,16 +42,13 @@ class SharedViewModel(context: Context) : ViewModel() {
     val playlists: LiveData<List<Playlist>> get() = _playlists
 
     init {
-        // Load the song queue and playlists from local storage or Firestore
         loadQueueFromPreferences()
         fetchPlaylists()
     }
 
     fun setCurrentSong(song: Data?) {
         _currentSong.value = song
-        if (song != null) {
-            saveSongToPreferences(song)
-        }
+        song?.let { saveSongToPreferences(it) }
     }
 
     fun addSongToQueue(song: Data) {
@@ -70,36 +65,33 @@ class SharedViewModel(context: Context) : ViewModel() {
     }
 
     fun playNextSong() {
-        val list = _songList.value ?: return
-        val currentIndex = list.indexOf(_currentSong.value)
-        if (currentIndex != -1 && currentIndex < list.size - 1) {
-            val nextSong = list[currentIndex + 1]
-            setCurrentSong(nextSong)
+        _songList.value?.let { list ->
+            val currentIndex = list.indexOf(_currentSong.value)
+            if (currentIndex in 0 until list.size - 1) {
+                setCurrentSong(list[currentIndex + 1])
+            }
         }
     }
 
     fun playPreviousSong() {
-        val list = _songList.value ?: return
-        val currentIndex = list.indexOf(_currentSong.value)
-        if (currentIndex > 0) {
-            val previousSong = list[currentIndex - 1]
-            setCurrentSong(previousSong)
+        _songList.value?.let { list ->
+            val currentIndex = list.indexOf(_currentSong.value)
+            if (currentIndex > 0) {
+                setCurrentSong(list[currentIndex - 1])
+            }
         }
     }
 
     fun addSongToPlaylist(playlistId: String, song: Data) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
             Log.e(TAG, "Error: User not logged in")
             return
         }
 
-        // Reference to the user's specific playlist
         val playlistRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
 
         playlistRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
-                // Add song to the existing playlist
                 playlistRef.update("songs", FieldValue.arrayUnion(song))
                     .addOnSuccessListener {
                         Log.d(TAG, "Song added to playlist successfully")
@@ -116,43 +108,42 @@ class SharedViewModel(context: Context) : ViewModel() {
     }
 
     private fun saveSongToPreferences(song: Data) {
-        val editor = prefs.edit()
-        editor.putString("currentSong", gson.toJson(song))
-        editor.apply()
+        prefs.edit().apply {
+            putString("currentSong", gson.toJson(song))
+            apply()
+        }
     }
 
     private fun getStoredSong(): Data? {
-        val songJson = prefs.getString("currentSong", null) ?: return null
-        return gson.fromJson(songJson, Data::class.java)
+        return prefs.getString("currentSong", null)?.let {
+            gson.fromJson(it, Data::class.java)
+        }
     }
 
     private fun savePlayingStateToPreferences(isPlaying: Boolean) {
-        val editor = prefs.edit()
-        editor.putBoolean("isPlaying", isPlaying)
-        editor.apply()
+        prefs.edit().apply {
+            putBoolean("isPlaying", isPlaying)
+            apply()
+        }
     }
 
     private fun loadQueueFromPreferences() {
         // Load the queue from SharedPreferences and update _songList
+        // Implement as needed
     }
 
     fun fetchPlaylists() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
-            val userPlaylistsRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists")
-
-            userPlaylistsRef.get()
+            firestore.collection("Playlists").document(userId).collection("UserPlaylists")
+                .get()
                 .addOnSuccessListener { result ->
-                    val playlists = mutableListOf<Playlist>()
-                    for (document in result) {
-                        val playlist = document.toObject(Playlist::class.java)
-                        Log.d(TAG, "Fetched playlist: $playlist")
-                        playlists.add(playlist)
+                    val playlists = result.mapNotNull { document ->
+                        document.toObject(Playlist::class.java)
                     }
                     _playlists.value = playlists
                 }
                 .addOnFailureListener { e ->
-                    Log.e(TAG, "Error fetching playlists: ${e.message}", e)
+                    Log.e(TAG, "Error fetching playlists", e)
                 }
         } else {
             Log.e(TAG, "Error: User not logged in")

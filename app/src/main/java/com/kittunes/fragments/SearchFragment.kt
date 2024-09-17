@@ -72,7 +72,7 @@ class SearchFragment : Fragment() {
         adapter = SearchAdapter(
             onSongClicked = { song -> onSongClicked(song) },
             onAddToQueue = { song -> sharedViewModel.addSongToQueue(song) },
-            onClickAddToPlaylist = { song -> showAddToPlaylistDialog(song) }  // Handle add to playlist
+            onClickAddToPlaylist = { song -> showAddToPlaylistDialog(song) }
         )
         binding.recyclerView.adapter = adapter
     }

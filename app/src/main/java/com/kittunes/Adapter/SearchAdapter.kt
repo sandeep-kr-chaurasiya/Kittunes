@@ -3,7 +3,9 @@ package com.kittunes.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.kittunes.Api_Data.Data
 import com.kittunes.R
 import com.kittunes.databinding.SearchCardBinding
@@ -37,14 +39,15 @@ class SearchAdapter(
         fun bind(song: Data) {
             binding.songTitle.text = song.title
             binding.artistName.text = song.artist.name
+            Glide.with(binding.root.context)
+                .load(song.album.cover_medium)
+                .into(binding.songThumbnail)
 
-            // Set the song data for binding
             binding.root.setOnClickListener {
                 onSongClicked(song)
             }
 
             binding.menuButton.setOnClickListener { view ->
-                // Create and show the PopupMenu
                 val popupMenu = PopupMenu(binding.root.context, view)
                 popupMenu.menuInflater.inflate(R.menu.search_menu, popupMenu.menu)
 
