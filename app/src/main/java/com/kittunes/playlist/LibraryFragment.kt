@@ -63,7 +63,7 @@ class LibraryFragment : Fragment() {
         dialog.show()
     }
 
-    fun savePlaylistToFirebase(playlistName: String) {
+    private fun savePlaylistToFirebase(playlistName: String) {
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -112,6 +112,7 @@ class LibraryFragment : Fragment() {
             Toast.makeText(requireContext(), "Error: User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun updateUIWithPlaylists(playlists: List<Playlist>) {
         binding.playlistRecyclerView.layoutManager = LinearLayoutManager(requireContext())

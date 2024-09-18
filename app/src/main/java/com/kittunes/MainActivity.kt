@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             redirectToWelcome()
             return
         }
-
         setupUserDetails()
         setupToolbar()
         setupDrawerNavigation()
@@ -93,8 +92,6 @@ class MainActivity : AppCompatActivity() {
     private fun restorePlaybackState() {
         val currentSong = sharedViewModel.currentSong.value
         val isPlaying = sharedViewModel.isPlaying.value ?: false
-
-        // Update UI based on current song
         if (currentSong != null) {
             updateSongData(currentSong)
             binding.currentsong.visibility = View.VISIBLE
