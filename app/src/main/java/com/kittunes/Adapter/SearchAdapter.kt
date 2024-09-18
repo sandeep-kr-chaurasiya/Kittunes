@@ -1,5 +1,6 @@
 package com.kittunes.Adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -17,6 +18,7 @@ class SearchAdapter(
 
     private var songList: List<Data> = emptyList()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<Data>) {
         songList = list
         notifyDataSetChanged()
