@@ -23,12 +23,10 @@ class SearchAdapter(
         songList = list
         notifyDataSetChanged()
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = SearchCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songList[position]
         holder.bind(song)
@@ -58,6 +56,7 @@ class SearchAdapter(
                             onAddToQueue(song)
                             true
                         }
+
                         R.id.search_add_to_playlist -> {
                             onClickAddToPlaylist(song)
                             true
