@@ -119,7 +119,6 @@ class SongDetailBottomFragment : BottomSheetDialogFragment() {
             }
         }
     }
-
     @SuppressLint("SetTextI18n")
     private fun setupSeekBar() {
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
