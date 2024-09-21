@@ -193,25 +193,6 @@ class SharedViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun fetchSongsDetails(songIds: List<String>) {
-        if (songIds.isNotEmpty()) {
-            firestore.collection("Songs")
-                .whereIn(FieldPath.documentId(), songIds)
-                .get()
-                .addOnSuccessListener { result ->
-                    val songs = result.mapNotNull { document ->
-                        document.toObject(Data::class.java)
-                    }
-                    _playlistSongs.postValue(songs)
-                }
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Error fetching song details", e)
-                }
-        } else {
-            Log.e(TAG, "Empty list of song IDs provided")
-        }
-    }
-
     companion object {
         private const val TAG = "SharedViewModel"
     }
