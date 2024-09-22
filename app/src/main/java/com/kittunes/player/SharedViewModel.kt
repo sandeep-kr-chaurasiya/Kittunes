@@ -99,6 +99,7 @@ class SharedViewModel(context: Context) : ViewModel() {
                 playlistRef.update("songs", FieldValue.arrayUnion(song))
                     .addOnSuccessListener {
                         Log.d(TAG, "Song added to playlist successfully")
+                        Log.d(TAG, "Updatedsong: $song")
                     }
                     .addOnFailureListener { e ->
                         Log.e(TAG, "Failed to add song to playlist", e)
@@ -110,7 +111,6 @@ class SharedViewModel(context: Context) : ViewModel() {
             Log.e(TAG, "Error fetching playlist document", e)
         }
     }
-
     private fun saveSongToPreferences(song: Data) {
         prefs.edit().apply {
             putString("currentSong", gson.toJson(song))
