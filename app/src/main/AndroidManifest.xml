@@ -18,7 +18,7 @@
 
         <!-- Launcher Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             android:name=".initilization.Welcome"
             android:exported="false" />
         <activity
-            android:name=".ActivityDrawer"
+            android:name=".main.ActivityDrawer"
             android:exported="false" />
         <activity
             android:name=".initilization.OtpVerification"

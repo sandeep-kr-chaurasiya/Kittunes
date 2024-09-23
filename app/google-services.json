@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "967130822491",
-    "project_id": "kittunes-51590",
-    "storage_bucket": "kittunes-51590.appspot.com"
+    "project_number": "202319422069",
+    "project_id": "kittunes-13",
+    "storage_bucket": "kittunes-13.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:967130822491:android:7c3c4c16e8cf8339a88c7e",
+        "mobilesdk_app_id": "1:202319422069:android:af2ccfe342a53991b30e3c",
         "android_client_info": {
           "package_name": "com.kittunes"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "202319422069-e1h7j67eppm7oa7ds2csqrngo3p5r85p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyC1OGkVkB001Aoz4tyWVLzxH9M3laCVDlw"
+          "current_key": "AIzaSyBqFWJgcOQQ2LJrs5t7ItC-_8koywLamG8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202319422069-e1h7j67eppm7oa7ds2csqrngo3p5r85p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

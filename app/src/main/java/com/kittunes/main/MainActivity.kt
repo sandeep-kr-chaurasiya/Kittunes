@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.main
 
 import android.annotation.SuppressLint
 import com.kittunes.player.SharedViewModel
@@ -20,6 +20,8 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.Api_Data.Data
+import com.kittunes.R
+import com.kittunes.SearchFragment
 import com.kittunes.databinding.ActivityMainBinding
 import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment

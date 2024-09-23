@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.kittunes.MainActivity
+import com.kittunes.main.MainActivity
 import com.kittunes.R
 import com.kittunes.databinding.ActivityLoginBinding
 
