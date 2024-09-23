@@ -51,12 +51,9 @@ class PlaylistDetailFragment : Fragment() {
 
         setupMenu()
 
-        // Observe playlistSongs LiveData
         sharedViewModel.playlistSongs.observe(viewLifecycleOwner) { songs ->
             updateUIWithSongs(songs)
         }
-
-        // Bind the MusicService
         bindService()
     }
 
@@ -91,7 +88,6 @@ class PlaylistDetailFragment : Fragment() {
 
     private fun updateUIWithSongs(songs: List<Data>) {
         val adapter = SongAdapter(songs) { song ->
-            Log.d("PlaylistDetailFragment", "Clicked song: ${song.title}")
             sharedViewModel.setCurrentSong(song) // Set the current song
             sharedViewModel.startPlayback() // Start playback
         }

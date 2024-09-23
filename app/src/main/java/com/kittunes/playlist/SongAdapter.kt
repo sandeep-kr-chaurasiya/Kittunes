@@ -16,12 +16,15 @@ class SongAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
             binding.songTitle.text = song.title
-            binding.root.setOnClickListener {
-                onSongClick(song)
-            }
+            binding.artistName.text=song.artist.name
+
             Glide.with(binding.root.context)
                 .load(song.album.cover_medium)
                 .into(binding.songThumbnail)
+            binding.root.setOnClickListener {
+                onSongClick(song)
+            }
+
         }
     }
 
