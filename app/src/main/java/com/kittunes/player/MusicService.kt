@@ -27,28 +27,32 @@ class MusicService : Service() {
     }
 
     fun prepareSong(song: Data) {
-        // Ensure that this method does not restart playback
+        // Check if the current song is the same as the new song
         if (currentSong != song) {
-            releaseMediaPlayer()
+            releaseMediaPlayer() // Release existing player
             currentSong = song
             mediaPlayer = MediaPlayer().apply {
                 try {
-                    setDataSource(song.preview)
+                    setDataSource(song.preview) // Ensure 'preview' is the correct field
                     setOnPreparedListener {
                         if (isPlaying) {
-                            start()
+                            start() // Start if already playing
                         }
                     }
                     setOnCompletionListener {
                         currentSong = null
                         this@MusicService.currentPosition = 0
+                        // Optionally handle moving to the next song here
                     }
-                    prepareAsync()
+                    prepareAsync() // Prepare asynchronously
                 } catch (e: Exception) {
                     Log.e("MusicService", "Error initializing MediaPlayer", e)
                     stopPlayback()
                 }
             }
+        } else {
+            // Restore position if the same song is prepared again
+            mediaPlayer?.seekTo(currentPosition)
         }
     }
 
@@ -58,12 +62,16 @@ class MusicService : Service() {
 
     fun pausePlayback() {
         mediaPlayer?.takeIf { it.isPlaying }?.pause()
-        // Save the current position when paused
-        currentPosition = mediaPlayer?.currentPosition ?: 0
+        currentPosition = mediaPlayer?.currentPosition ?: 0 // Save current position
     }
 
     fun resumePlayback() {
-        mediaPlayer?.takeIf { !it.isPlaying }?.start()
+        mediaPlayer?.let {
+            if (!it.isPlaying) {
+                it.seekTo(currentPosition)
+                it.start()
+            }
+        }
     }
 
     fun stopPlayback() {

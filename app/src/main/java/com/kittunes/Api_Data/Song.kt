@@ -5,12 +5,12 @@ import android.os.Parcelable
 import com.google.firebase.Timestamp
 
 data class Song(
-    val songId: String? = null,          // Unique ID for the song
-    val title: String? = null,           // Title of the song
-    val artist: String? = null,          // Artist of the song
-    val album: String? = null,           // Album name
-    val coverUrl: String? = null,        // URL for the cover image (optional)
-    val releaseDate: Timestamp? = null   // Release date of the song (optional)
+    val songId: String? = null,
+    val title: String? = null,
+    val artist: String? = null,
+    val album: String? = null,
+    val coverUrl: String? = null,
+    val releaseDate: Timestamp? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

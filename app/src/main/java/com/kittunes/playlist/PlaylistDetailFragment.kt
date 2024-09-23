@@ -1,6 +1,11 @@
 package com.kittunes.playlist
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +21,15 @@ import com.kittunes.Api_Data.Playlist
 import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.R
+import com.kittunes.fragments.SongAdapter
+import com.kittunes.player.MusicService
 
 class PlaylistDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaylistDetailBinding
     private var playlist: Playlist? = null
     private lateinit var sharedViewModel: SharedViewModel
+    private var musicService: MusicService? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +55,26 @@ class PlaylistDetailFragment : Fragment() {
         sharedViewModel.playlistSongs.observe(viewLifecycleOwner) { songs ->
             updateUIWithSongs(songs)
         }
+
+        // Bind the MusicService
+        bindService()
+    }
+
+    private fun bindService() {
+        val intent = Intent(requireContext(), MusicService::class.java)
+        requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            sharedViewModel.setMusicService(musicService!!) // Pass the service to the ViewModel
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+        }
     }
 
     private fun displayPlaylistDetails(playlist: Playlist) {
@@ -62,11 +90,10 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun updateUIWithSongs(songs: List<Data>) {
-        // Log the songs list to check its content
-        Log.d("PlaylistDetailFragment", "Updating UI with songs: $songs")
         val adapter = SongAdapter(songs) { song ->
             Log.d("PlaylistDetailFragment", "Clicked song: ${song.title}")
-            // Handle song click event
+            sharedViewModel.setCurrentSong(song) // Set the current song
+            sharedViewModel.startPlayback() // Start playback
         }
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter
@@ -111,5 +138,10 @@ class PlaylistDetailFragment : Fragment() {
             .addOnFailureListener { e ->
                 Log.e("PlaylistDetailFragment", "Error deleting playlist", e)
             }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireContext().unbindService(serviceConnection)
     }
 }

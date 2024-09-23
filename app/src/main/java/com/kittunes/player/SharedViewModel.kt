@@ -20,7 +20,11 @@ class SharedViewModel(context: Context) : ViewModel() {
     private val gson = Gson()
     val firestore = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private var musicService: MusicService? = null
 
+    fun setMusicService(service: MusicService) {
+        musicService = service
+    }
     private val _songList = MutableLiveData<MutableList<Data>>(mutableListOf())
     val songList: LiveData<MutableList<Data>> get() = _songList
 
@@ -190,6 +194,10 @@ class SharedViewModel(context: Context) : ViewModel() {
         }.addOnFailureListener { e ->
             Log.e(TAG, "Error fetching songs from playlist", e)
         }
+    }
+
+    fun startPlayback() {
+        musicService?.startPlayback()
     }
 
     companion object {
