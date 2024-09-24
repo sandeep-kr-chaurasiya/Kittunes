@@ -97,6 +97,7 @@ class PlaylistDetailFragment : Fragment() {
         sharedViewModel.fetchPlaylists()
     }
 
+
     private fun setupMenu() {
         binding.playlistMenuButton.setOnClickListener { view ->
             val popupMenu = PopupMenu(requireContext(), view)
