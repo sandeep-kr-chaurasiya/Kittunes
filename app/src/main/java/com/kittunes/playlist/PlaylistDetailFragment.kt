@@ -25,7 +25,6 @@ import com.kittunes.fragments.SongAdapter
 import com.kittunes.player.MusicService
 
 class PlaylistDetailFragment : Fragment() {
-
     private lateinit var binding: FragmentPlaylistDetailBinding
     private var playlist: Playlist? = null
     private lateinit var sharedViewModel: SharedViewModel
