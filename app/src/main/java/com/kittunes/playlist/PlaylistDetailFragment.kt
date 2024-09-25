@@ -87,8 +87,16 @@ class PlaylistDetailFragment : Fragment() {
     private fun updateUIWithSongs(songs: List<Data>) {
         val adapter = SongAdapter(songs) { song ->
             sharedViewModel.setCurrentSong(song)
-            musicService?.prepareSong(song)
-            musicService?.startPlayback()
+            sharedViewModel.setPlayingState(true) // Set the state to playing
+            if (musicService != null) {
+                musicService?.prepareSong(song)
+                musicService?.mediaPlayer?.setOnPreparedListener {
+                    musicService?.startPlayback()
+                }
+            } else {
+                val serviceIntent = Intent(requireContext(), MusicService::class.java)
+                requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+            }
         }
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter
