@@ -198,6 +198,7 @@ class SharedViewModel(context: Context) : ViewModel() {
 
     fun startPlayback() {
         musicService?.startPlayback()
+        setPlayingState(true)
     }
 
     companion object {

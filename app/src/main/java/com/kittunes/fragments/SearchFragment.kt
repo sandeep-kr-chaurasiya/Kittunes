@@ -122,7 +122,7 @@ class SearchFragment : Fragment() {
         adapter.submitList(emptyList())
     }
 
-    fun onSongClicked(song: Data) {
+    private fun onSongClicked(song: Data) {
         sharedViewModel.addSongToQueue(song)
         sharedViewModel.setCurrentSong(song)
         sharedViewModel.setPlayingState(true)
