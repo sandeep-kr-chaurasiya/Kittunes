@@ -180,12 +180,12 @@ class SearchFragment : Fragment() {
             isBound = true
             Log.d(TAG, "MusicService bound")
 
-            sharedViewModel.currentSong.value?.let { song ->
-                musicService?.prepareSong(song)
-                musicService?.mediaPlayer?.setOnPreparedListener {
-                    musicService?.startPlayback()
-                }
-            }
+//            sharedViewModel.currentSong.value?.let { song ->
+//                musicService?.prepareSong(song)
+//                musicService?.mediaPlayer?.setOnPreparedListener {
+//                    musicService?.startPlayback()
+//                }
+//            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

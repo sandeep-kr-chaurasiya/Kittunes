@@ -42,17 +42,17 @@ class PlaylistDetailFragment : Fragment() {
 
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
-        arguments?.getParcelable<Playlist>("playlist")?.let {
-            playlist = it
-            displayPlaylistDetails(it)
+        arguments?.getParcelable<Playlist>("playlist")?.let { playlist ->
+            this.playlist = playlist
+            displayPlaylistDetails(playlist)
         } ?: fetchPlaylists()
 
         setupMenu()
+        bindService()
 
         sharedViewModel.playlistSongs.observe(viewLifecycleOwner) { songs ->
             updateUIWithSongs(songs)
         }
-        bindService()
     }
 
     private fun bindService() {
@@ -64,7 +64,7 @@ class PlaylistDetailFragment : Fragment() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MusicService.MusicBinder
             musicService = binder.getService()
-            sharedViewModel.setMusicService(musicService!!) // Pass the service to the ViewModel
+            sharedViewModel.setMusicService(musicService!!)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -86,8 +86,9 @@ class PlaylistDetailFragment : Fragment() {
 
     private fun updateUIWithSongs(songs: List<Data>) {
         val adapter = SongAdapter(songs) { song ->
-            sharedViewModel.setCurrentSong(song) // Set the current song
-            sharedViewModel.startPlayback() // Start playback
+            sharedViewModel.setCurrentSong(song)
+            musicService?.prepareSong(song)
+            musicService?.startPlayback()
         }
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter

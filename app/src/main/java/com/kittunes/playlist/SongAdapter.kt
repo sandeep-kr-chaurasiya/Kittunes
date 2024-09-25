@@ -9,11 +9,10 @@ import com.kittunes.databinding.SongCardBinding
 
 class SongAdapter(
     private val songs: List<Data>,
-    private val onSongClick: (Data) -> Unit
+    private val onSongClicked: (Data) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
-    inner class SongViewHolder(private val binding: SongCardBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class SongViewHolder(private val binding: SongCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
             binding.songTitle.text = song.title
             binding.artistName.text=song.artist.name
@@ -21,10 +20,11 @@ class SongAdapter(
             Glide.with(binding.root.context)
                 .load(song.album.cover_medium)
                 .into(binding.songThumbnail)
-            binding.root.setOnClickListener {
-                onSongClick(song)
-            }
 
+            binding.root.setOnClickListener {
+                onSongClicked(song)
+
+            }
         }
     }
 
