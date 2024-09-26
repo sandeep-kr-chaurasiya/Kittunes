@@ -92,9 +92,9 @@ class SharedViewModel(context: Context) : ViewModel() {
     fun addSongToQueue(song: Data) {
         val currentList = _songList.value ?: mutableListOf()
         if (!currentList.contains(song)) {
-            currentList.add(0, song) // Add the new song at the beginning
+            currentList.add(song)
             _songList.value = currentList
-            saveSongListToPreferences(currentList)  // Save the updated song list
+            saveSongListToPreferences(currentList)
         }
     }
 
