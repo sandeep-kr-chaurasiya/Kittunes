@@ -1,5 +1,6 @@
 package com.kittunes.player
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -7,9 +8,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.Playlist
@@ -20,12 +20,17 @@ class SharedViewModel(context: Context) : ViewModel() {
     private val gson = Gson()
     val firestore = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+    @SuppressLint("StaticFieldLeak")
     private var musicService: MusicService? = null
 
     fun setMusicService(service: MusicService) {
         musicService = service
     }
-    private val _songList = MutableLiveData<MutableList<Data>>(mutableListOf())
+
+    private val _songList = MutableLiveData<MutableList<Data>>(mutableListOf()).apply {
+        value = loadSongListFromPreferences()  // Load the saved song list from preferences
+    }
     val songList: LiveData<MutableList<Data>> get() = _songList
 
     private val _currentSong = MutableLiveData<Data?>().apply {
@@ -50,7 +55,6 @@ class SharedViewModel(context: Context) : ViewModel() {
     val playlistSongs: LiveData<List<Data>> get() = _playlistSongs
 
     init {
-        loadQueueFromPreferences()
         fetchPlaylists()
     }
 
@@ -59,11 +63,13 @@ class SharedViewModel(context: Context) : ViewModel() {
         song?.let { saveSongToPreferences(it) }
     }
 
+    // Update to add new song at the beginning of the list
     fun addSongToQueue(song: Data) {
         val currentList = _songList.value ?: mutableListOf()
         if (!currentList.contains(song)) {
-            currentList.add(song)
+            currentList.add(0, song) // Add the new song at the beginning
             _songList.value = currentList
+            saveSongListToPreferences(currentList)  // Save the updated song list
         }
     }
 
@@ -103,7 +109,6 @@ class SharedViewModel(context: Context) : ViewModel() {
                 playlistRef.update("songs", FieldValue.arrayUnion(song))
                     .addOnSuccessListener {
                         Log.d(TAG, "Song added to playlist successfully")
-                        Log.d(TAG, "Updatedsong: $song")
                     }
                     .addOnFailureListener { e ->
                         Log.e(TAG, "Failed to add song to playlist", e)
@@ -114,29 +119,6 @@ class SharedViewModel(context: Context) : ViewModel() {
         }.addOnFailureListener { e ->
             Log.e(TAG, "Error fetching playlist document", e)
         }
-    }
-    private fun saveSongToPreferences(song: Data) {
-        prefs.edit().apply {
-            putString("currentSong", gson.toJson(song))
-            apply()
-        }
-    }
-
-    private fun getStoredSong(): Data? {
-        return prefs.getString("currentSong", null)?.let {
-            gson.fromJson(it, Data::class.java)
-        }
-    }
-
-    private fun savePlayingStateToPreferences(isPlaying: Boolean) {
-        prefs.edit().apply {
-            putBoolean("isPlaying", isPlaying)
-            apply()
-        }
-    }
-
-    private fun loadQueueFromPreferences() {
-        // Load the queue from SharedPreferences and update _songList
     }
 
     fun fetchPlaylists() {
@@ -168,13 +150,11 @@ class SharedViewModel(context: Context) : ViewModel() {
         playlistRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val songs = document.get("songs") as? List<Map<String, Any>> ?: emptyList()
-                Log.d(TAG, "Fetched songs: $songs")  // Log the raw data
+                Log.d(TAG, "Fetched songs: $songs")
 
                 if (songs.isNotEmpty()) {
-                    // Convert Map to Data object
                     val songDataList = songs.mapNotNull { map ->
                         try {
-                            // Convert Map to Data object
                             val jsonString = Gson().toJson(map)
                             Gson().fromJson(jsonString, Data::class.java)
                         } catch (e: Exception) {
@@ -182,11 +162,10 @@ class SharedViewModel(context: Context) : ViewModel() {
                             null
                         }
                     }
-                    // Post the songs data to LiveData
                     _playlistSongs.postValue(songDataList)
                 } else {
                     Log.e(TAG, "No songs found in the playlist")
-                    _playlistSongs.postValue(emptyList())  // Ensure empty list is posted
+                    _playlistSongs.postValue(emptyList())
                 }
             } else {
                 Log.e(TAG, "Playlist does not exist with ID: $playlistId")
@@ -196,9 +175,53 @@ class SharedViewModel(context: Context) : ViewModel() {
         }
     }
 
+    // Start playback
     fun startPlayback() {
         musicService?.startPlayback()
         setPlayingState(true)
+    }
+
+    // Save the current song to SharedPreferences
+    private fun saveSongToPreferences(song: Data) {
+        prefs.edit().apply {
+            putString("currentSong", gson.toJson(song))
+            apply()
+        }
+    }
+
+    // Get the stored song from SharedPreferences
+    private fun getStoredSong(): Data? {
+        return prefs.getString("currentSong", null)?.let {
+            gson.fromJson(it, Data::class.java)
+        }
+    }
+
+    // Save the playing state to SharedPreferences
+    private fun savePlayingStateToPreferences(isPlaying: Boolean) {
+        prefs.edit().apply {
+            putBoolean("isPlaying", isPlaying)
+            apply()
+        }
+    }
+
+    // Save the song list to SharedPreferences
+    private fun saveSongListToPreferences(songList: List<Data>) {
+        val jsonString = gson.toJson(songList)
+        prefs.edit().apply {
+            putString("songList", jsonString)
+            apply()
+        }
+    }
+
+    // Load the song list from SharedPreferences
+    private fun loadSongListFromPreferences(): MutableList<Data> {
+        val jsonString = prefs.getString("songList", null)
+        return if (jsonString != null) {
+            val type = object : com.google.gson.reflect.TypeToken<MutableList<Data>>() {}.type
+            gson.fromJson<MutableList<Data>>(jsonString, type)
+        } else {
+            mutableListOf()
+        }
     }
 
     companion object {
