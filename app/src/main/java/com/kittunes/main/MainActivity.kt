@@ -1,8 +1,6 @@
 package com.kittunes.main
 
 import android.annotation.SuppressLint
-import com.kittunes.player.SharedViewModel
-import com.kittunes.player.ViewModelFactory
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -28,6 +26,8 @@ import com.kittunes.fragments.LibraryFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
 import com.kittunes.player.MusicService
+import com.kittunes.player.SharedViewModel
+import com.kittunes.player.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,26 +45,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        auth = FirebaseAuth.getInstance()
-        if (auth.currentUser == null) {
-            redirectToWelcome()
-            return
-        }
-        setupUserDetails()
         setupToolbar()
-        setupDrawerNavigation()
-        setupBottomNavigation()
-
-        replaceFragment(HomeFragment())
-
-        val serviceIntent = Intent(this, MusicService::class.java)
-        startService(serviceIntent)
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        // Restore playback state
-        restorePlaybackState()
+        setupUserAuthentication()
+        setupNavigationComponents()
+        startMusicService()
 
         sharedViewModel.currentSong.observe(this) { currentSong ->
             currentSong?.let { updateSongData(it) }
@@ -75,61 +59,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.currentsong.setOnClickListener {
-            val currentSong = sharedViewModel.currentSong.value
-            val isPlaying = sharedViewModel.isPlaying.value ?: false
-
-            if (currentSong != null) {
-                // Open the bottom sheet fragment without restarting the music
-                val bottomSheetFragment = SongDetailBottomFragment.newInstance(currentSong, autoPlay = false)
-                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-
-                // Ensure UI reflects the current playback state
-                updatePlayPauseButton(isPlaying)
-            } else {
-                Log.d(TAG, "No current song to display")
-            }
+            sharedViewModel.currentSong.value?.let { currentSong ->
+                showSongDetailBottomFragment(currentSong, sharedViewModel.isPlaying.value ?: false)
+            } ?: Log.d(TAG, "No current song to display")
         }
     }
 
-    private fun restorePlaybackState() {
-        val currentSong = sharedViewModel.currentSong.value
-        val isPlaying = sharedViewModel.isPlaying.value ?: false
-        if (currentSong != null) {
-            updateSongData(currentSong)
-            binding.currentsong.visibility = View.VISIBLE
-        } else {
-            binding.currentsong.visibility = View.GONE
+    private fun setupUserAuthentication() {
+        auth = FirebaseAuth.getInstance()
+        if (auth.currentUser == null) {
+            redirectToWelcome()
+            return
         }
-        updatePlayPauseButton(isPlaying)
-
-        // Prepare the song without starting playback
-        if (isBound && currentSong != null) {
-            musicService?.prepareSong(currentSong)
-            if (isPlaying) {
-                musicService?.resumePlayback()
-            } else {
-                musicService?.pausePlayback()
-            }
-        }
+        setupUserDetails()
     }
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val musicBinder = binder as? MusicService.MusicBinder
-            musicService = musicBinder?.getService()
-            isBound = true
-            Log.d(TAG, "MusicService bound")
-            restorePlaybackState()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-            musicService = null
-            Log.d(TAG, "MusicService unbound")
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
     private fun setupUserDetails() {
         auth.currentUser?.uid?.let { userId ->
             firestore.collection("users").document(userId).get()
@@ -146,6 +90,61 @@ class MainActivity : AppCompatActivity() {
         } ?: run {
             binding.username.text = "User not logged in"
             Log.d(TAG, "User is not logged in")
+        }
+    }
+
+    private fun setupNavigationComponents() {
+        setupToolbar()
+        setupDrawerNavigation()
+        setupBottomNavigation()
+        replaceFragment(HomeFragment())
+    }
+
+    private fun startMusicService() {
+        val serviceIntent = Intent(this, MusicService::class.java)
+        startService(serviceIntent)
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        restorePlaybackState()
+    }
+
+    private fun restorePlaybackState() {
+        val currentSong = sharedViewModel.currentSong.value
+        val isPlaying = sharedViewModel.isPlaying.value ?: false
+        binding.currentsong.visibility = if (currentSong != null) View.VISIBLE else View.GONE
+        currentSong?.let { updateSongData(it) }
+        updatePlayPauseButton(isPlaying)
+
+        if (isBound) {
+            if (currentSong != null) {
+                musicService?.prepareSong(currentSong)
+            }
+            if (isPlaying) {
+                musicService?.resumePlayback()
+            } else {
+                musicService?.pausePlayback()
+            }
+        }
+    }
+
+    private fun showSongDetailBottomFragment(currentSong: Data, isPlaying: Boolean) {
+        val bottomSheetFragment = SongDetailBottomFragment.newInstance(currentSong, autoPlay = false)
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        updatePlayPauseButton(isPlaying)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            val musicBinder = binder as? MusicService.MusicBinder
+            musicService = musicBinder?.getService()
+            isBound = true
+            Log.d(TAG, "MusicService bound")
+            restorePlaybackState()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+            musicService = null
+            Log.d(TAG, "MusicService unbound")
         }
     }
 
@@ -205,18 +204,14 @@ class MainActivity : AppCompatActivity() {
             .load(song.album.cover_medium)
             .into(binding.cover)
 
-        // Check if song is different from the one currently playing in MusicService
         if (musicService?.currentSong != song) {
             musicService?.prepareSong(song)
         }
     }
 
     private fun updatePlayPauseButton(isPlaying: Boolean) {
-        val playPauseButton = binding.btnPlayPause
-        playPauseButton.setImageResource(
-            if (isPlaying) R.drawable.pause else R.drawable.play1
-        )
-        playPauseButton.setOnClickListener {
+        binding.btnPlayPause.setImageResource(if (isPlaying) R.drawable.pause else R.drawable.play1)
+        binding.btnPlayPause.setOnClickListener {
             if (isPlaying) {
                 musicService?.pausePlayback()
                 sharedViewModel.setPlayingState(false)

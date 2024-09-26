@@ -1,9 +1,14 @@
 package com.kittunes.player
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.kittunes.Api_Data.Data
 import com.kittunes.Api_Data.Playlist
+import com.kittunes.main.MainActivity
 
 class SharedViewModel(context: Context) : ViewModel() {
 
@@ -56,6 +62,24 @@ class SharedViewModel(context: Context) : ViewModel() {
 
     init {
         fetchPlaylists()
+    }
+
+    fun onSongClicked(song: Data, activity: MainActivity, isBound: Boolean) {
+        addSongToQueue(song)
+        setCurrentSong(song)
+        setPlayingState(true)
+
+        if (isBound) {
+            musicService?.prepareSong(song)
+            musicService?.mediaPlayer?.setOnPreparedListener {
+                musicService?.startPlayback()
+            }
+        } else {
+            val serviceIntent = Intent(activity, MusicService::class.java)
+            activity.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+
+        activity.binding.currentsong.visibility = View.VISIBLE
     }
 
     fun setCurrentSong(song: Data?) {
@@ -223,7 +247,20 @@ class SharedViewModel(context: Context) : ViewModel() {
             mutableListOf()
         }
     }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            // Optional: Start playback immediately if needed
+            if (isPlaying.value == true) {
+                musicService?.startPlayback()
+            }
+        }
 
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+        }
+    }
     companion object {
         private const val TAG = "SharedViewModel"
     }

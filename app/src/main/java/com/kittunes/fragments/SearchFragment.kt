@@ -35,9 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchFragment : Fragment() {
 
-    private val sharedViewModel: SharedViewModel by activityViewModels {
-        ViewModelFactory(requireContext())
-    }
+    private val sharedViewModel: SharedViewModel by activityViewModels { ViewModelFactory(requireContext()) }
     private lateinit var binding: FragmentSearchBinding
     private lateinit var adapter: SearchAdapter
     private var musicService: MusicService? = null
@@ -51,10 +49,7 @@ class SearchFragment : Fragment() {
             .create(ApiInterface::class.java)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -123,20 +118,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun onSongClicked(song: Data) {
-        sharedViewModel.addSongToQueue(song)
-        sharedViewModel.setCurrentSong(song)
-        sharedViewModel.setPlayingState(true)
-
-        if (isBound) {
-            musicService?.prepareSong(song)
-            musicService?.mediaPlayer?.setOnPreparedListener {
-                musicService?.startPlayback()
-            }
-        } else {
-            val serviceIntent = Intent(requireContext(), MusicService::class.java)
-            requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
-        (activity as? MainActivity)?.binding?.currentsong?.visibility = View.VISIBLE
+        sharedViewModel.onSongClicked(song, requireActivity() as MainActivity, isBound)
     }
 
     private fun showAddToPlaylistDialog(song: Data) {
@@ -179,18 +161,11 @@ class SearchFragment : Fragment() {
             musicService = musicBinder?.getService()
             isBound = true
             Log.d(TAG, "MusicService bound")
-
-//            sharedViewModel.currentSong.value?.let { song ->
-//                musicService?.prepareSong(song)
-//                musicService?.mediaPlayer?.setOnPreparedListener {
-//                    musicService?.startPlayback()
-//                }
-//            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
             musicService = null
+            isBound = false
             Log.d(TAG, "MusicService unbound")
         }
     }
