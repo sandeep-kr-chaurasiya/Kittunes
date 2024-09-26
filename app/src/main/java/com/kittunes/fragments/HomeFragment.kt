@@ -63,7 +63,8 @@ class HomeFragment : Fragment() {
 
     private fun updateUIWithSong(songList: List<Data>) {
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adapter = RecentSongAdapter(songList) { song ->
+        val reversedSongList = songList.reversed() // Reverse the song list
+        val adapter = RecentSongAdapter(reversedSongList) { song ->
             onSongClicked(song)
             sharedViewModel.addSongToQueue(song)
             playSong(song)
