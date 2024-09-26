@@ -2,6 +2,8 @@
 
 Kittunes is a feature-rich music streaming application that allows users to search, play, and manage their music collections. It provides seamless functionality for creating playlists, managing song queues, and a user-friendly interface for an enjoyable music experience.
 
+#Install Kittunes
+[Install Kittunes](https://github.com/sandeep-kr-chaurasiya/Kittunes/blob/main/app/release/Kittunes.apk)
 ## Table of Contents
 
 - [Introduction](#introduction)
