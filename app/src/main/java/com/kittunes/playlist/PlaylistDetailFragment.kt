@@ -22,6 +22,7 @@ import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.R
 import com.kittunes.fragments.SongAdapter
+import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 
 class PlaylistDetailFragment : Fragment() {
@@ -29,7 +30,7 @@ class PlaylistDetailFragment : Fragment() {
     private var playlist: Playlist? = null
     private lateinit var sharedViewModel: SharedViewModel
     private var musicService: MusicService? = null
-
+    private var isBound = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,21 +87,30 @@ class PlaylistDetailFragment : Fragment() {
 
     private fun updateUIWithSongs(songs: List<Data>) {
         val adapter = SongAdapter(songs) { song ->
-            sharedViewModel.setCurrentSong(song)
-            sharedViewModel.setPlayingState(true) // Set the state to playing
-            if (musicService != null) {
-                musicService?.prepareSong(song)
-                musicService?.mediaPlayer?.setOnPreparedListener {
-                    musicService?.startPlayback()
-                }
-            } else {
-                val serviceIntent = Intent(requireContext(), MusicService::class.java)
-                requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-            }
+            onSongClicked(song)
+            sharedViewModel.addSongToQueue(song) // Add song to the queue
+            playSong(song) // Play the song
         }
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter
     }
+
+    private fun onSongClicked(song: Data) {
+        sharedViewModel.onSongClicked(song, requireActivity() as MainActivity, isBound)
+    }
+
+    private fun playSong(song: Data) {
+        if (musicService != null) {
+            musicService?.prepareSong(song)
+            musicService?.mediaPlayer?.setOnPreparedListener {
+                musicService?.startPlayback()
+            }
+        } else {
+            val serviceIntent = Intent(requireContext(), MusicService::class.java)
+            requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
 
     private fun fetchPlaylists() {
         sharedViewModel.fetchPlaylists()

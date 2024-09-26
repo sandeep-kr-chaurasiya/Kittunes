@@ -1,6 +1,11 @@
 package com.kittunes.fragments
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +17,8 @@ import com.kittunes.Api_Data.Data
 import com.kittunes.databinding.FragmentHomeBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.Adapter.RecentSongAdapter
+import com.kittunes.main.MainActivity
+import com.kittunes.player.MusicService
 
 class HomeFragment : Fragment() {
 
@@ -19,6 +26,21 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var musicService: MusicService? = null
+    private var isBound = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+            isBound = false
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,25 +55,44 @@ class HomeFragment : Fragment() {
 
         val songList = sharedViewModel.songList.value
         if (songList.isNullOrEmpty()) {
-            // Handle empty or null list here (e.g., show a message or empty state)
             Log.d("HomeFragment", "No recent songs available")
         } else {
             updateUIWithSong(songList)
         }
     }
 
-    private fun updateUIWithSong(songlist: List<Data>) {
+    private fun updateUIWithSong(songList: List<Data>) {
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.recentRecyclerview.layoutManager = layoutManager
+        val adapter = RecentSongAdapter(songList) { song ->
+            onSongClicked(song)
+            sharedViewModel.addSongToQueue(song)
+            playSong(song)
+        }
 
-        binding.recentRecyclerview.adapter = RecentSongAdapter(songlist) { song ->
-            Log.d("HomeFragment", "Clicked song: ${song.title}")
-            // Handle song click event here
+        binding.recentRecyclerview.layoutManager = layoutManager
+        binding.recentRecyclerview.adapter = adapter
+    }
+    private fun onSongClicked(song: Data) {
+        sharedViewModel.onSongClicked(song, requireActivity() as MainActivity, isBound)
+    }
+    private fun playSong(song: Data) {
+        if (isBound) {
+            musicService?.prepareSong(song)
+            musicService?.mediaPlayer?.setOnPreparedListener {
+                musicService?.startPlayback()
+            }
+        } else {
+            val serviceIntent = Intent(requireContext(), MusicService::class.java)
+            requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        if (isBound) {
+            requireContext().unbindService(serviceConnection)
+            isBound = false
+        }
         _binding = null
     }
 }

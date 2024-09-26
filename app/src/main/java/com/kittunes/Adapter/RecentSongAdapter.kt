@@ -19,7 +19,7 @@ class RecentSongAdapter(
 
         // Bind data to views
         fun bind(song: Data) {
-            binding.songTitle.text = song.title
+            binding.songTitle.text = song.title_short
             binding.artistName.text = song.artist.name
             Glide.with(binding.root.context)
                 .load(song.album.cover_medium)

@@ -22,7 +22,8 @@ import com.kittunes.main.MainActivity
 
 class SharedViewModel(context: Context) : ViewModel() {
 
-    private val prefs: SharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     private val gson = Gson()
     val firestore = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -126,7 +127,9 @@ class SharedViewModel(context: Context) : ViewModel() {
             return
         }
 
-        val playlistRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
+        val playlistRef =
+            firestore.collection("Playlists").document(userId).collection("UserPlaylists")
+                .document(playlistId)
 
         playlistRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
@@ -170,7 +173,9 @@ class SharedViewModel(context: Context) : ViewModel() {
             return
         }
 
-        val playlistRef = firestore.collection("Playlists").document(userId).collection("UserPlaylists").document(playlistId)
+        val playlistRef =
+            firestore.collection("Playlists").document(userId).collection("UserPlaylists")
+                .document(playlistId)
         playlistRef.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val songs = document.get("songs") as? List<Map<String, Any>> ?: emptyList()
