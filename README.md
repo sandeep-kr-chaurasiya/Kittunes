@@ -106,4 +106,16 @@ Contributions are welcome! If you have suggestions or improvements, feel free to
 
 
 
-##LICENSE
+## License
+
+Kittunes is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact
+
+For any questions, suggestions, or feedback, feel free to contact the author:
+
+- **Name**: Sandeep Kumar
+- **Website**: [https://sandeep-kr-chaurasiya.netlify.app](https://sandeep-kr-chaurasiya.netlify.app)
+- **Email**: sandeepkr11320@gmail.com
+
+---
