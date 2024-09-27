@@ -5,16 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kittunes.api_response.search.Data
-import com.kittunes.databinding.RecentCardBinding
+import com.kittunes.databinding.RowRecentCardBinding
 
 class RecentSongAdapter(
     private val recentSongs: List<Data>,
     private val onSongClicked: (Data) -> Unit
 ) : RecyclerView.Adapter<RecentSongAdapter.ViewHolder>() {
 
-    private var songList: List<Data> = emptyList()
-
-    inner class ViewHolder(private val binding: RecentCardBinding) :
+    inner class ViewHolder(private val binding: RowRecentCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         // Bind data to views
@@ -32,7 +30,7 @@ class RecentSongAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = RecentCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = RowRecentCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

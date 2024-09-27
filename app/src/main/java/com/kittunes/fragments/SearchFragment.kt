@@ -1,5 +1,6 @@
 package com.kittunes.fragments
 
+
 import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
@@ -121,7 +122,7 @@ class SearchFragment : Fragment() {
         sharedViewModel.onSongClicked(song, requireActivity() as MainActivity, isBound)
     }
 
-    private fun showAddToPlaylistDialog(song: Data) {
+    fun showAddToPlaylistDialog(song: Data) {
         sharedViewModel.playlists.observe(viewLifecycleOwner) { playlists ->
             if (playlists.isNotEmpty()) {
                 val dialogView = layoutInflater.inflate(R.layout.dailouge_add_to_playlist, null)

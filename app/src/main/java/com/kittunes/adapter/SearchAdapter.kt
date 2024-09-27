@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kittunes.api_response.search.Data
 import com.kittunes.R
-import com.kittunes.databinding.SearchCardBinding
+import com.kittunes.databinding.RowSearchCardBinding
 
 class SearchAdapter(
     private val onSongClicked: (Data) -> Unit,
@@ -24,7 +24,7 @@ class SearchAdapter(
         notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = SearchCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = RowSearchCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -34,7 +34,7 @@ class SearchAdapter(
 
     override fun getItemCount(): Int = songList.size
 
-    inner class ViewHolder(private val binding: SearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: RowSearchCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(song: Data) {
             binding.songTitle.text = song.title
             binding.artistName.text = song.artist.name

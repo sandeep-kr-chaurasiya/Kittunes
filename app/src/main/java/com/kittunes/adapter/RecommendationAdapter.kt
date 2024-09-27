@@ -7,19 +7,18 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kittunes.R
-import com.kittunes.api_response.recommendation.DataR
+import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.RowRecommendationCardBinding
 
 class RecommendationAdapter(
-    private val onSongClicked: (DataR) -> Unit,
-    private val onAddToQueue: (DataR) -> Unit,
-    private val onClickAddToPlaylist: (DataR) -> Unit
+    private val onSongClicked: (Data) -> Unit,
+    private val onAddToQueue: (Data) -> Unit,
+    private val onClickAddToPlaylist: (Data) -> Unit
 ) : RecyclerView.Adapter<RecommendationAdapter.ViewHolder>() {
 
-    private var songList: List<DataR> = emptyList()
-
+    private var songList: List<Data> = emptyList()
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<DataR>) {
+    fun submitList(list: List<Data>) {
         songList = list
         notifyDataSetChanged()
     }
@@ -35,7 +34,7 @@ class RecommendationAdapter(
     override fun getItemCount(): Int = songList.size
 
     inner class ViewHolder(private val binding: RowRecommendationCardBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(song: DataR) {
+        fun bind(song: Data) {
             binding.songTitle.text = song.title
             binding.artistName.text = song.artist.name
             Glide.with(binding.root.context)
@@ -58,7 +57,6 @@ class RecommendationAdapter(
                         }
 
                         R.id.search_add_to_playlist -> {
-                            onClickAddToPlaylist(song)
                             true
                         }
                         else -> false
