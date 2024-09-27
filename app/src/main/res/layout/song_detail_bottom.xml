@@ -45,8 +45,9 @@
 
     </LinearLayout>
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/cover"
+    app:shapeAppearanceOverlay="@style/RoundedImageView"
         android:layout_width="370dp"
         android:layout_height="370dp"
         android:layout_marginTop="50dp"

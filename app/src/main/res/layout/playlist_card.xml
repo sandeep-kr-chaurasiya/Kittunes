@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/playlistcard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,10 +17,11 @@
             android:orientation="horizontal">
 
             <!-- Song Thumbnail -->
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/play_list_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                app:shapeAppearanceOverlay="@style/RoundedImageView"
                 android:layout_marginEnd="16dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/dummyimage" />

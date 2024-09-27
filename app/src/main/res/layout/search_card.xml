@@ -17,12 +17,13 @@
         android:background="@color/gray">
 
         <!-- Song Thumbnail -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:src="@drawable/dummyimage"
             android:id="@+id/song_thumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginEnd="16dp"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
             android:scaleType="centerCrop" />
 
         <!-- Song Details -->

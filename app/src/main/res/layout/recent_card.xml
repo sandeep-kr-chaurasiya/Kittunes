@@ -19,15 +19,16 @@
         android:padding="8dp"
         android:background="@color/gray">
 
-        <!-- Song Thumbnail -->
-        <ImageView
+
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/song_thumbnail"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
             android:src="@drawable/dummyimage" />
 
-        <!-- Song Details -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,19 +39,20 @@
                 android:id="@+id/song_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Song Title"
-                android:textSize="15sp"
-                android:maxLines="1"
+                android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:maxLines="1"
+                android:text="@string/song_title"
                 android:textColor="@color/white"
-                android:fontFamily="@font/poppins" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/artist_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Artist Name"
+                android:text="@string/artist_name"
                 android:textSize="12sp"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins" />
