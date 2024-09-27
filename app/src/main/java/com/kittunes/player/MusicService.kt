@@ -14,7 +14,6 @@ class MusicService : Service() {
     var currentSong: Data? = null
     private var currentPosition: Int = 0
     private val binder = MusicBinder()
-    var sharedViewModel: SharedViewModel? = null
 
     val isPlaying: Boolean
         get() = mediaPlayer?.isPlaying ?: false
