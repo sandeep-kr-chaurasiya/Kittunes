@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -17,12 +18,12 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kittunes.api_response.search.Data
 import com.kittunes.R
-import com.kittunes.fragments.SearchFragment
+import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.ActivityMainBinding
 import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment
+import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
 import com.kittunes.player.MusicService
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var firestore: FirebaseFirestore
     private var musicService: MusicService? = null
     private var isBound = false
     private val sharedViewModel: SharedViewModel by viewModels {
@@ -44,6 +45,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        firestore = FirebaseFirestore.getInstance()
 
         setupToolbar()
         setupUserAuthentication()
@@ -58,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             updatePlayPauseButton(isPlaying)
         }
 
+        fetchProfile()
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { currentSong ->
                 showSongDetailBottomFragment(currentSong, sharedViewModel.isPlaying.value ?: false)
@@ -93,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "User is not logged in")
         }
     }
+
+
 
     private fun setupNavigationComponents() {
         setupToolbar()
@@ -227,6 +233,35 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, Welcome::class.java))
         finishAffinity()
     }
+
+    private fun fetchProfile() {
+        val user = auth.currentUser
+        user?.let {
+            val userRef = firestore.collection("users").document(it.uid)
+
+            userRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val profileUrl = document.getString("profileUrl")
+                        if (!profileUrl.isNullOrEmpty()) {
+                            val profile = binding.menubtn
+                            Glide.with(this@MainActivity)
+                                .load(profileUrl)
+                                .error(R.drawable.user_profile)
+                                .into(profile)
+                        } else {
+                            Toast.makeText(this, "No profile picture found", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "No profile data found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Error fetching profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
