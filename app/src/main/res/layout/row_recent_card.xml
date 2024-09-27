@@ -21,7 +21,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/song_thumbnail"
-            android:layout_width="120dp"
+            android:layout_width="110dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/RoundedImageView"

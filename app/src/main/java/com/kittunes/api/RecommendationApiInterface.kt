@@ -1,6 +1,6 @@
 package com.kittunes.api
 
-import com.kittunes.api_response.search.MyData
+import com.kittunes.api_response.recommendation.MyDataR
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -12,5 +12,5 @@ interface RecommendationApiInterface {
         "X-RapidAPI-Host: deezerdevs-deezer.p.rapidapi.com"
     )
     @GET("/search")
-    fun getData(@Query("q") query: String): Call<MyData>
+    fun getDataR(@Query("q") query: String= "Popular hindi songs"): Call<MyDataR>
 }

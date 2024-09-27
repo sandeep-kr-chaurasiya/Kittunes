@@ -1,0 +1,72 @@
+package com.kittunes.adapter
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.kittunes.R
+import com.kittunes.api_response.recommendation.DataR
+import com.kittunes.databinding.RowRecommendationCardBinding
+
+class RecommendationAdapter(
+    private val onSongClicked: (DataR) -> Unit,
+    private val onAddToQueue: (DataR) -> Unit,
+    private val onClickAddToPlaylist: (DataR) -> Unit
+) : RecyclerView.Adapter<RecommendationAdapter.ViewHolder>() {
+
+    private var songList: List<DataR> = emptyList()
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(list: List<DataR>) {
+        songList = list
+        notifyDataSetChanged()
+    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = RowRecommendationCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val song = songList[position]
+        holder.bind(song)
+    }
+
+    override fun getItemCount(): Int = songList.size
+
+    inner class ViewHolder(private val binding: RowRecommendationCardBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(song: DataR) {
+            binding.songTitle.text = song.title
+            binding.artistName.text = song.artist.name
+            Glide.with(binding.root.context)
+                .load(song.album.cover_medium)
+                .into(binding.songThumbnail)
+
+            binding.root.setOnClickListener {
+                onSongClicked(song)
+            }
+
+            binding.menuButton.setOnClickListener { view ->
+                val popupMenu = PopupMenu(binding.root.context, view)
+                popupMenu.menuInflater.inflate(R.menu.search_menu, popupMenu.menu)
+
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.add_queue -> {
+                            onAddToQueue(song)
+                            true
+                        }
+
+                        R.id.search_add_to_playlist -> {
+                            onClickAddToPlaylist(song)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popupMenu.show()
+            }
+        }
+    }
+
+}

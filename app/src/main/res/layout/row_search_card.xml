@@ -16,7 +16,7 @@
         android:orientation="horizontal"
         android:background="@color/gray">
 
-        <!-- Song Thumbnail -->
+        
         <com.google.android.material.imageview.ShapeableImageView
             android:src="@drawable/dummyimage"
             android:id="@+id/song_thumbnail"
@@ -55,9 +55,9 @@
                 android:text="Artist Name" />
         </LinearLayout>
 
-        <!-- Three-dot menu button -->
+        
         <ImageButton
-            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
             android:id="@+id/menu_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
