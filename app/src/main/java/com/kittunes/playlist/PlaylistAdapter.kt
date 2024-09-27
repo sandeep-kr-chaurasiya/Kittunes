@@ -3,7 +3,7 @@ package com.kittunes.fragments
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kittunes.api_data.Playlist
+import com.kittunes.api_response.search.Playlist
 import com.kittunes.databinding.PlaylistCardBinding
 
 class PlaylistAdapter(

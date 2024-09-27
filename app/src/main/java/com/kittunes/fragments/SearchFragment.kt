@@ -1,4 +1,4 @@
-package com.kittunes
+package com.kittunes.fragments
 
 import android.app.AlertDialog
 import android.content.ComponentName
@@ -17,12 +17,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kittunes.R
 import com.kittunes.adapter.SearchAdapter
-import com.kittunes.api.ApiInterface
-import com.kittunes.api_data.Data
-import com.kittunes.api_data.MyData
+import com.kittunes.api.SearchApiInterface
+import com.kittunes.api_response.search.Data
+import com.kittunes.api_response.search.MyData
 import com.kittunes.databinding.FragmentSearchBinding
-import com.kittunes.fragments.PlaylistAdapter
 import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 import com.kittunes.player.SharedViewModel
@@ -46,7 +46,7 @@ class SearchFragment : Fragment() {
             .baseUrl("https://deezerdevs-deezer.p.rapidapi.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ApiInterface::class.java)
+            .create(SearchApiInterface::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -91,7 +91,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchSongs(query: String) {
-        apiInterface.getdata(query).enqueue(object : Callback<MyData?> {
+        apiInterface.getData(query).enqueue(object : Callback<MyData?> {
             override fun onResponse(call: Call<MyData?>, response: Response<MyData?>) {
                 if (response.isSuccessful) {
                     val dataList = response.body()?.data ?: emptyList()

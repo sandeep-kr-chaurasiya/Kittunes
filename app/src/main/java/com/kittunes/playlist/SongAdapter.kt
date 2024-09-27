@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kittunes.api_data.Data
+import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.SongCardBinding
 
 class SongAdapter(

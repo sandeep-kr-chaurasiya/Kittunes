@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
-import com.kittunes.api_data.Data
-import com.kittunes.api_data.Playlist
+import com.kittunes.api_response.search.Data
+import com.kittunes.api_response.search.Playlist
 import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.R

@@ -16,8 +16,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
-import com.kittunes.api_data.Data
-import com.kittunes.api_data.Playlist
+import com.kittunes.api_response.search.Data
+import com.kittunes.api_response.search.Playlist
 import com.kittunes.main.MainActivity
 
 class SharedViewModel(context: Context) : ViewModel() {

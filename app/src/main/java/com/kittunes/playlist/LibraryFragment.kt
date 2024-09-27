@@ -14,7 +14,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kittunes.api_data.Playlist
+import com.kittunes.api_response.search.Playlist
 import com.kittunes.playlist.PlaylistDetailFragment
 import com.kittunes.R
 import com.kittunes.databinding.FragmentLibraryBinding

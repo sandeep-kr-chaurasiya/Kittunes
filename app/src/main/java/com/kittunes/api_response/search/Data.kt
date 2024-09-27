@@ -1,4 +1,4 @@
-package com.kittunes.api_data
+package com.kittunes.api_response.search
 
 import android.os.Parcel
 import android.os.Parcelable

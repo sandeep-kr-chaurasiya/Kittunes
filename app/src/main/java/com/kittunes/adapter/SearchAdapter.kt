@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kittunes.api_data.Data
+import com.kittunes.api_response.search.Data
 import com.kittunes.R
 import com.kittunes.databinding.SearchCardBinding
 

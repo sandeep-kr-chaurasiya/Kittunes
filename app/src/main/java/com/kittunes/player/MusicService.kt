@@ -6,7 +6,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.kittunes.api_data.Data
+import com.kittunes.api_response.search.Data
 
 class MusicService : Service() {
 

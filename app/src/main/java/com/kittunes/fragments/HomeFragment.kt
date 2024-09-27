@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kittunes.api_data.Data
+import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.FragmentHomeBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.adapter.RecentSongAdapter
@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
 
     private fun updateUIWithSong(songList: List<Data>) {
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val reversedSongList = songList.reversed() // Reverse the song list
+        val reversedSongList = songList.reversed()
         val adapter = RecentSongAdapter(reversedSongList) { song ->
             onSongClicked(song)
             sharedViewModel.addSongToQueue(song)
