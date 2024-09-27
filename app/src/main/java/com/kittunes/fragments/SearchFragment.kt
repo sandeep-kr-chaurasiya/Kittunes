@@ -17,10 +17,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kittunes.Adapter.SearchAdapter
-import com.kittunes.Api.ApiInterface
-import com.kittunes.Api_Data.Data
-import com.kittunes.Api_Data.MyData
+import com.kittunes.adapter.SearchAdapter
+import com.kittunes.api.ApiInterface
+import com.kittunes.api_data.Data
+import com.kittunes.api_data.MyData
 import com.kittunes.databinding.FragmentSearchBinding
 import com.kittunes.fragments.PlaylistAdapter
 import com.kittunes.main.MainActivity

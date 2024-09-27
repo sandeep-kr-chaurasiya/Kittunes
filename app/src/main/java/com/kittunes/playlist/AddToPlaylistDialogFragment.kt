@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.Timestamp
-import com.kittunes.Api_Data.Playlist
+import com.kittunes.api_data.Playlist
 import com.kittunes.databinding.DailougeAddToPlaylistBinding
 import com.kittunes.fragments.PlaylistAdapter
 

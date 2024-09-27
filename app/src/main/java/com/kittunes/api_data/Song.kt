@@ -1,4 +1,4 @@
-package com.kittunes.Api_Data
+package com.kittunes.api_data
 
 import android.os.Parcel
 import android.os.Parcelable

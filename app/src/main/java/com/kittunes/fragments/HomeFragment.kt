@@ -13,10 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kittunes.Api_Data.Data
+import com.kittunes.api_data.Data
 import com.kittunes.databinding.FragmentHomeBinding
 import com.kittunes.player.SharedViewModel
-import com.kittunes.Adapter.RecentSongAdapter
+import com.kittunes.adapter.RecentSongAdapter
 import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 

@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kittunes.Api_Data.Data
+import com.kittunes.api_data.Data
 import com.kittunes.R
 import com.kittunes.SearchFragment
 import com.kittunes.databinding.ActivityMainBinding

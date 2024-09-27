@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.kittunes.Api_Data.Data
+import com.kittunes.api_data.Data
 import com.kittunes.R
 import com.kittunes.databinding.SongDetailBottomBinding
 import com.kittunes.player.MusicService

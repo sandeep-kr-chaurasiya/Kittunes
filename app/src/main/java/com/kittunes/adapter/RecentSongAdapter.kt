@@ -1,10 +1,10 @@
-package com.kittunes.Adapter
+package com.kittunes.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kittunes.Api_Data.Data
+import com.kittunes.api_data.Data
 import com.kittunes.databinding.RecentCardBinding
 
 class RecentSongAdapter(

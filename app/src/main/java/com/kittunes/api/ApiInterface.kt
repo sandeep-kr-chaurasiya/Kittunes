@@ -1,6 +1,6 @@
-package com.kittunes.Api
+package com.kittunes.api
 
-import com.kittunes.Api_Data.MyData
+import com.kittunes.api_data.MyData
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
