@@ -41,7 +41,6 @@ class HomeFragment : Fragment() {
             isBound = false
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
