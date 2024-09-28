@@ -95,21 +95,17 @@ Kittunes follows a modular architecture with a clear separation of concerns betw
 
 3. **Playing Music**: When a user clicks on a song, the `SongDetailBottomFragment` displays the song details. The `MediaPlayer` instance starts playback, and the UI updates with the current song details.
 
-4. **Managing Playlists**: Users can create new playlists or modify existing ones. The app interacts with Firestore to store playlist data and song additions.
+4. **Managing Playlists**: Users can create or modify new playlists. The app interacts with Firestore to store playlist data and song additions.
 
-5. **Queue Management**: The `SharedViewModel` maintains a queue of songs for playback. Users can navigate to the next or previous song seamlessly.
+5. **Queue Management**: The `SharedViewModel` maintains a queue of songs for playback. Users can seamlessly navigate to the next or previous song.
 
 6. **Persistent State**: The app uses `SharedPreferences` to store user preferences and the current state of playback. This allows users to resume where they left off when they reopen the app.
-
-## Contributing
-
-Contributions are welcome! If you have suggestions or improvements, feel free to open an issue or submit a pull request.
 
 
 
 ## License
 
-Kittunes is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+Kittunes is licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ## Contact
 

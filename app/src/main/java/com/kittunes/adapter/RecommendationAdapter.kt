@@ -57,6 +57,7 @@ class RecommendationAdapter(
                         }
 
                         R.id.search_add_to_playlist -> {
+                            onClickAddToPlaylist(song)
                             true
                         }
                         else -> false
