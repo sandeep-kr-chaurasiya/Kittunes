@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -62,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fetchProfile()
+
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { currentSong ->
                 showSongDetailBottomFragment(currentSong, sharedViewModel.isPlaying.value ?: false)
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener { toggleDrawer() }
-        binding.menubtn.setOnClickListener { toggleDrawer() }
+        binding.profileBtn.setOnClickListener { toggleDrawer() }
     }
 
     private fun toggleDrawer() {
@@ -244,20 +244,21 @@ class MainActivity : AppCompatActivity() {
                     if (document.exists()) {
                         val profileUrl = document.getString("profileUrl")
                         if (!profileUrl.isNullOrEmpty()) {
-                            val profile = binding.menubtn
+                            Log.d(TAG, "Profile picture found: $profileUrl")
+                            val profile = binding.profileBtn
                             Glide.with(this@MainActivity)
                                 .load(profileUrl)
                                 .error(R.drawable.user_profile)
                                 .into(profile)
                         } else {
-                            Toast.makeText(this, "No profile picture found", Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "No profile picture found")
                         }
                     } else {
-                        Toast.makeText(this, "No profile data found", Toast.LENGTH_SHORT).show()
+                        Log.e(TAG, "No profile found for user: ${it.uid}")
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Error fetching profile: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Error fetching profile picture", exception)
                 }
         }
     }
