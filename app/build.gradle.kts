@@ -61,7 +61,8 @@ dependencies {
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation (libs.androidx.fragment.ktx)
-    implementation (libs.circleimageview)
     implementation (libs.material)
+
+    implementation (libs.circleimageview)
 
 }
