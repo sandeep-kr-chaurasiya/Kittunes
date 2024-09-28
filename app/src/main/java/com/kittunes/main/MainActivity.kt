@@ -168,6 +168,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun setupDrawerNavigation() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -175,7 +177,6 @@ class MainActivity : AppCompatActivity() {
                     auth.signOut()
                     redirectToWelcome()
                 }
-                else -> Log.e(TAG, "Unknown drawer item selected")
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
