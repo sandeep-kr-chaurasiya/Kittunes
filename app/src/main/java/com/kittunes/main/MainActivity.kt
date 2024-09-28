@@ -229,6 +229,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun redirectToWelcome() {
         startActivity(Intent(this, Welcome::class.java))
         finishAffinity()
