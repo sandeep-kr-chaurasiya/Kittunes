@@ -95,11 +95,11 @@ Kittunes is licensed under the MIT License. For more details, see the [LICENSE](
 
 For any questions, suggestions, or feedback, feel free to contact the authors:
 
-- **Name**: Sandeep Kumar
+- ###Name: Sandeep Kumar
 - **Website**: [https://sandeep-kr-chaurasiya.netlify.app](https://sandeep-kr-chaurasiya.netlify.app)
 - **Email**: sandeepkr11320@gmail.com
 
-- **Name**: Dinesh Kumar
+- ###Name: Dinesh Kumar
 - **Website**: [https://d-s.netlify.app](https://d-s.netlify.app)
 - **Email**: dineshkumar623092@gmail,com
 
