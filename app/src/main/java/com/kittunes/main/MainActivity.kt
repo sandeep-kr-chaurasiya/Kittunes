@@ -17,12 +17,12 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kittunes.api_response.search.Data
 import com.kittunes.R
-import com.kittunes.fragments.SearchFragment
+import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.ActivityMainBinding
 import com.kittunes.fragments.HomeFragment
 import com.kittunes.fragments.LibraryFragment
+import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome
 import com.kittunes.player.MusicService
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var firestore: FirebaseFirestore
     private var musicService: MusicService? = null
     private var isBound = false
     private val sharedViewModel: SharedViewModel by viewModels {
@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        firestore = FirebaseFirestore.getInstance()
 
         setupToolbar()
         setupUserAuthentication()
@@ -57,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         sharedViewModel.isPlaying.observe(this) { isPlaying ->
             updatePlayPauseButton(isPlaying)
         }
+
+        fetchProfile()
 
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { currentSong ->
@@ -93,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "User is not logged in")
         }
     }
+
+
 
     private fun setupNavigationComponents() {
         setupToolbar()
@@ -151,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener { toggleDrawer() }
-        binding.menubtn.setOnClickListener { toggleDrawer() }
+        binding.profileBtn.setOnClickListener { toggleDrawer() }
     }
 
     private fun toggleDrawer() {
@@ -162,6 +168,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun setupDrawerNavigation() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -169,7 +177,6 @@ class MainActivity : AppCompatActivity() {
                     auth.signOut()
                     redirectToWelcome()
                 }
-                else -> Log.e(TAG, "Unknown drawer item selected")
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -223,10 +230,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun redirectToWelcome() {
         startActivity(Intent(this, Welcome::class.java))
         finishAffinity()
     }
+
+    private fun fetchProfile() {
+        val user = auth.currentUser
+        user?.let {
+            val userRef = firestore.collection("users").document(it.uid)
+
+            userRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val profileUrl = document.getString("profileUrl")
+                        if (!profileUrl.isNullOrEmpty()) {
+                            Log.d(TAG, "Profile picture found: $profileUrl")
+                            val profile = binding.profileBtn
+                            Glide.with(this@MainActivity)
+                                .load(profileUrl)
+                                .error(R.drawable.user_profile)
+                                .into(profile)
+                        } else {
+                            Log.d(TAG, "No profile picture found")
+                        }
+                    } else {
+                        Log.e(TAG, "No profile found for user: ${it.uid}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "Error fetching profile picture", exception)
+                }
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
