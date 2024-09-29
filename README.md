@@ -3,22 +3,6 @@
 Kittunes is a feature-rich music streaming application that allows users to search, play, and manage their music collections. It provides seamless functionality for creating playlists, managing song queues, and a user-friendly interface for an enjoyable music experience.
 
 [Install Kittunes](https://github.com/sandeep-kr-chaurasiya/Kittunes/blob/main/app/release/Kittunes.apk)
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [App Architecture](#app-architecture)
-- [Key Components](#key-components)
-- [Activity and Fragment Structure](#activity-and-fragment-structure)
-- [ViewModel Integration](#viewmodel-integration)
-- [Firebase Integration](#firebase-integration)
-- [Media Playback](#media-playback)
-- [Technologies Used](#technologies-used)
-- [How It Works](#how-it-works)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
@@ -109,11 +93,14 @@ Kittunes is licensed under the MIT License. For more details, see the [LICENSE](
 
 ## Contact
 
-For any questions, suggestions, or feedback, feel free to contact the author:
+For any questions, suggestions, or feedback, feel free to contact the authors:
 
 - **Name**: Sandeep Kumar
 - **Website**: [https://sandeep-kr-chaurasiya.netlify.app](https://sandeep-kr-chaurasiya.netlify.app)
 - **Email**: sandeepkr11320@gmail.com
-- hello
+
+- **Name**: Dinesh Kumar
+- **Website**: [https://d-s.netlify.app](https://d-s.netlify.app)
+- **Email**: dineshkumar623092@gmail,com
 
 ---
