@@ -101,6 +101,6 @@ For any questions, suggestions, or feedback, feel free to contact the authors:
 
 - ### Name: Dinesh Kumar
 - **Website**: [https://d-s.netlify.app](https://d-s.netlify.app)
-- **Email**: dineshkumar623092@gmail,com
+- **Email**: dineshkumar623092@gmail.com
 
 ---
