@@ -40,6 +40,8 @@ class LibraryFragment : Fragment() {
         fetchPlaylists()
     }
 
+
+
     private fun showCreatePlaylistDialog() {
         val dialogView = layoutInflater.inflate(R.layout.create_dialouge, null)
         val playlistNameEditText = dialogView.findViewById<EditText>(R.id.PlaylistName)

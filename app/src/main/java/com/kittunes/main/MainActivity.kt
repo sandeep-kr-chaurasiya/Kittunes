@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         setupUserDetails()
     }
 
-
     @SuppressLint("SetTextI18n")
     private fun setupUserDetails() {
         auth.currentUser?.uid?.let { userId ->
