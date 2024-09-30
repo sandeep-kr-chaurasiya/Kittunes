@@ -57,10 +57,6 @@
             app:layout_constraintBottom_toTopOf="@id/currentsong"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- Current Song Layout -->
-
-        <!-- Bottom Navigation -->
         <LinearLayout
             android:layout_marginHorizontal="3dp"
             android:id="@+id/currentsong"
