@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "User is not logged in")
         }
     }
-
     private fun setupNavigationComponents() {
         setupToolbar()
         setupDrawerNavigation()
