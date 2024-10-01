@@ -98,8 +98,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun setupNavigationComponents() {
         setupToolbar()
         setupDrawerNavigation()
