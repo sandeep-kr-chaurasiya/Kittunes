@@ -1,4 +1,4 @@
-package com.kittunes.fragments
+package com.kittunes.playlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

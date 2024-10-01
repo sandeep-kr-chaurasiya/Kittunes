@@ -1,4 +1,4 @@
-package com.kittunes.fragments
+package com.kittunes.playlist
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kittunes.api_response.search.Playlist
-import com.kittunes.playlist.PlaylistDetailFragment
 import com.kittunes.R
 import com.kittunes.databinding.FragmentLibraryBinding
 import java.util.UUID

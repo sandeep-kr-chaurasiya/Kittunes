@@ -21,7 +21,7 @@ import com.kittunes.R
 import com.kittunes.api_response.search.Data
 import com.kittunes.databinding.ActivityMainBinding
 import com.kittunes.fragments.HomeFragment
-import com.kittunes.fragments.LibraryFragment
+import com.kittunes.playlist.LibraryFragment
 import com.kittunes.fragments.SearchFragment
 import com.kittunes.fragments.SongDetailBottomFragment
 import com.kittunes.initilization.Welcome

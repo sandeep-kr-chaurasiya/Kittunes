@@ -26,6 +26,7 @@ import com.kittunes.databinding.FragmentHomeBinding
 import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 import com.kittunes.player.SharedViewModel
+import com.kittunes.playlist.PlaylistAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

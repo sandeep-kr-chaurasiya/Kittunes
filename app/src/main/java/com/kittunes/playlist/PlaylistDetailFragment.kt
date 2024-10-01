@@ -21,7 +21,6 @@ import com.kittunes.api_response.search.Playlist
 import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.R
-import com.kittunes.fragments.SongAdapter
 import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 

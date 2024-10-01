@@ -8,7 +8,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kittunes.api_response.search.Playlist
 import com.kittunes.databinding.DailougeAddToPlaylistBinding
-import com.kittunes.fragments.PlaylistAdapter
 
 class AddToPlaylistDialogFragment(
     private val playlists: List<Playlist>,
