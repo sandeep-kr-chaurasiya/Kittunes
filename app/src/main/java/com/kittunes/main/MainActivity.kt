@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         replaceFragment(HomeFragment())
     }
-
     private fun startMusicService() {
         val serviceIntent = Intent(this, MusicService::class.java)
         startService(serviceIntent)
