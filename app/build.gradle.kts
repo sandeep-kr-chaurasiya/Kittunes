@@ -65,5 +65,6 @@ dependencies {
     implementation (libs.material)
 
     implementation (libs.circleimageview)
+    implementation (libs.androidx.viewpager2)
 
 }

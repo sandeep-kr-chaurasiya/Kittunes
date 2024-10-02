@@ -21,6 +21,7 @@ import com.kittunes.api_response.search.Playlist
 import com.kittunes.databinding.FragmentPlaylistDetailBinding
 import com.kittunes.player.SharedViewModel
 import com.kittunes.R
+import com.kittunes.fragments.SearchFragment
 import com.kittunes.main.MainActivity
 import com.kittunes.player.MusicService
 
@@ -30,6 +31,7 @@ class PlaylistDetailFragment : Fragment() {
     private lateinit var sharedViewModel: SharedViewModel
     private var musicService: MusicService? = null
     private var isBound = false
+    private var SearchFragment:SearchFragment?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,11 +87,16 @@ class PlaylistDetailFragment : Fragment() {
     }
 
     private fun updateUIWithSongs(songs: List<Data>) {
-        val adapter = SongAdapter(songs) { song ->
-            onSongClicked(song)
-            sharedViewModel.addSongToQueue(song) // Add song to the queue
-            playSong(song) // Play the song
-        }
+        val adapter = SongAdapter(songs,
+            onSongClicked = { song ->
+                onSongClicked(song)
+                playSong(song)
+            },
+            onAddToQueue = { song ->
+                sharedViewModel.addSongToQueue(song) // Add song to the queue
+                Toast.makeText(requireContext(), "${song.title} added to queue", Toast.LENGTH_SHORT).show()
+            }
+        )
         binding.songsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.songsRecyclerView.adapter = adapter
     }
