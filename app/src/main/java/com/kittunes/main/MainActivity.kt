@@ -157,6 +157,7 @@ class MainActivity : AppCompatActivity() {
         binding.profileBtn.setOnClickListener { toggleDrawer() }
     }
 
+
     private fun toggleDrawer() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -164,6 +165,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
+
 
     private fun setupDrawerNavigation() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->

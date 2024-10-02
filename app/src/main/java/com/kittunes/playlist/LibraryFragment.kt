@@ -114,7 +114,6 @@ class LibraryFragment : Fragment() {
         }
     }
 
-
     private fun updateUIWithPlaylists(playlists: List<Playlist>) {
         binding.playlistRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.playlistRecyclerView.adapter = PlaylistAdapter(playlists) { playlist ->
