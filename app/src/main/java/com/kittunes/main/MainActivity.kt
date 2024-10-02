@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
             } ?: Log.d(TAG, "No current song to display")
         }
     }
-
     private fun setupUserAuthentication() {
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser == null) {
