@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "User is not logged in")
         }
     }
+
     private fun setupNavigationComponents() {
         setupToolbar()
         setupDrawerNavigation()
@@ -163,8 +164,6 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
-
-
 
     private fun setupDrawerNavigation() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
