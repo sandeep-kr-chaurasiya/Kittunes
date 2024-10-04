@@ -145,8 +145,6 @@ class MainActivity : AppCompatActivity() {
             restorePlaybackState()
         }
 
-
-
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
             musicService = null
