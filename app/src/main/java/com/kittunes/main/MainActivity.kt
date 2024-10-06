@@ -129,7 +129,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun showSongDetailBottomFragment(currentSong: Data, isPlaying: Boolean) {
         val bottomSheetFragment = SongDetailBottomFragment.newInstance(currentSong, autoPlay = false)
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
