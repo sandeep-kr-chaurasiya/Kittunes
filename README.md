@@ -11,8 +11,6 @@ Kittunes is designed for music lovers, enabling users to easily find their favor
 ## Features
 
 
-
-
 - **Music Playback**: Stream songs with controls for play, pause, skip, and rewind.
 - **Search Functionality**: Users can search for songs, artists, and albums.
 - **Playlist Management**: Create, modify, and delete playlists.
