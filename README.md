@@ -26,7 +26,6 @@ Kittunes is designed for music lovers, enabling users to easily find their favor
 To get started with Kittunes,Install from here 
 
 
-
 Ensure you have the required dependencies in your `build.gradle` file and set up your Firebase project for authentication and Firestore.
 
 ## Usage
