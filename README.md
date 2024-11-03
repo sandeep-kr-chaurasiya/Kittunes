@@ -8,6 +8,7 @@ Kittunes is a feature-rich music streaming application that allows users to sear
 
 Kittunes is designed for music lovers, enabling users to easily find their favorite songs, create personalized playlists, and manage playback seamlessly. With features like song queue management and user authentication, Kittunes aims to provide a robust music streaming experience.
 
+
 ## Features
 
 - **Music Playback**: Stream songs with controls for play, pause, skip, and rewind.
