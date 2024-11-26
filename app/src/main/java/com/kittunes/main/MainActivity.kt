@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         fetchProfile()
+
         binding.currentsong.setOnClickListener {
             sharedViewModel.currentSong.value?.let { currentSong ->
                 showSongDetailBottomFragment(currentSong, sharedViewModel.isPlaying.value ?: false)
