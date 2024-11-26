@@ -90,6 +90,7 @@ class LibraryFragment : Fragment() {
         }
     }
 
+
     private fun fetchPlaylists() {
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
