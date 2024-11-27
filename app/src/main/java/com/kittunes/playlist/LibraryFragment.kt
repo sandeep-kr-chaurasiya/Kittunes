@@ -89,8 +89,6 @@ class LibraryFragment : Fragment() {
             Log.e(TAG, "Error: User not logged in")
         }
     }
-
-
     private fun fetchPlaylists() {
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
