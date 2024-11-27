@@ -24,7 +24,6 @@ class PlaylistAdapter(
             }
         }
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val binding =
             RowPlaylistCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
