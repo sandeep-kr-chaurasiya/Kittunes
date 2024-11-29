@@ -30,7 +30,6 @@ class PlaylistAdapter(
             RowPlaylistCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PlaylistViewHolder(binding)
     }
-
     override fun getItemCount(): Int = playlists.size
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
